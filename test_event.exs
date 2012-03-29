@@ -1,12 +1,11 @@
 #
-# Exercise the public API of the Event module
+# Exercise the public API of the Event module.
 #
-# First, compile the event.ex file. Then run
-#
-#     $ iex test_event.exs
+# First, compile the event.ex file. Then run iex and paste the code from this
+# file into it.
 #
 
-
+# A helper function
 # Flushes all currently available messages to standard output.
 flush = fn() ->
     f = fn(f) ->

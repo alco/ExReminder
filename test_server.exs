@@ -1,3 +1,9 @@
+#
+# Test our event server.
+#
+# Copy and paste this code into running iex shell.
+#
+
 EventServer.start
 EventServer.subscribe Process.self
 EventServer.add_event "Hey There!", "test", 1000
