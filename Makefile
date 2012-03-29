@@ -7,5 +7,6 @@ __MAIN__/Event: src/event.ex
 
 __MAIN__/EventServer: src/event_server.ex
 	rm -rf __MAIN__/EventServer
+	rm __MAIN__/EventServer.beam
 	elixirc src/event_server.ex
 
