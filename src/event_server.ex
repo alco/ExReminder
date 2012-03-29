@@ -28,7 +28,7 @@ defmodule EventServer do
     end
 
     def init do
-        main_loop State.new events: :orddict.new, clients: :orddict.new
+        main_loop State.new
     end
 
     # Create a new event with a unique name
@@ -164,9 +164,9 @@ defmodule EventServer do
 
 
     # Send 'msg' to each subscribed client
-    defp send_to_clients(msg, clients) do
-        :orddict.map fn(_ref, pid) ->
+    def send_to_clients(msg, clients) do
+        Enum.map clients, fn({_ref, pid}) ->
             pid <- msg
-        end, clients
+        end
     end
 end
