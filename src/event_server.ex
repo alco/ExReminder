@@ -94,7 +94,7 @@ defmodule EventServer do
             # We'll keep a list of all subscribers and monitor them
             # so that we don't send useless messages to crashed clients
             mon = :erlang.monitor :process, client
-            new_state = state.update_clients fn(clients) -> :orddict.store mon, client, clients end
+            new_state = state.update_clients fn(clients) -> Orddict.put(clients, mon, client) end
             pid <- { msg_ref, :ok }
             main_loop new_state
 
@@ -104,9 +104,11 @@ defmodule EventServer do
                 # Event module and not our referred EventServer.Event record
                 event_pid = __MAIN__.Event.start_link name, timeout
                 new_state = state.update_events fn(events) ->
-                                :orddict.store name,
-                                Event.new(name: name, description: description, pid: event_pid, timeout: timeout),
-                                events
+                                Orddict.put(
+                                    events,
+                                    name,
+                                    Event.new(name: name, description: description, pid: event_pid, timeout: timeout)
+                                )
                             end
                 pid <- { msg_ref, :ok }
                 main_loop new_state
@@ -121,7 +123,7 @@ defmodule EventServer do
             events = case :orddict.find(name, state.events) do
                      match: { :ok, event }
                          __MAIN__.Event.cancel event.pid
-                         :orddict.erase name, state.events
+                         :orddict.erase(name, state.events)
                      match: :error
                          state.events
                      end
@@ -133,7 +135,7 @@ defmodule EventServer do
             case :orddict.find(name, state.events) do
             match: { :ok, event }
                 send_to_clients { :done, event.name, event.description }, state.clients
-                main_loop state.update_events fn(events) -> :orddict.erase name, events end
+                main_loop state.update_events fn(events) -> :orddict.erase(name, events) end
             match: :error
                 # This happens if we cancel an event and it fires at the same time
                 main_loop state
@@ -146,7 +148,7 @@ defmodule EventServer do
 
         match: { 'DOWN', ref, :process, _pid, _reason }
             # A client has crashed
-            main_loop state.update_clients fn(clients) -> :orddict.erase ref, clients end
+            main_loop state.update_clients fn(clients) -> :orddict.erase(ref, clients) end
 
         match: :code_change
             # New code has arrived! Time to upgrade.
