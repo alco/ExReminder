@@ -30,10 +30,11 @@ Practical_ further down the page.
 ## Laying Out The Design For Our Application ##
 
 Now when you're all set to dive into building a real working application, refer
-to the aforementioned [chapter][3] and read the first couple of sections. These
-are explaining the application's design, messaging protocol and some details
-about the final code structure. Once you reach the first code blocks, come back
-here and we shall continue
+to the aforementioned [chapter][3] and read the first couple of sections where
+you'll find a detailed description (with pictures!) of the architecture and
+messaging protocol for our application. As soon as you've got basic
+understanding of the problem and the proposed design for solving it, come back
+here and we shall start our walk through the code.
 
 ## The Event Module ##
 
@@ -75,7 +76,7 @@ defmodule Event do
 end
 ```
 
-This is basically the entire code for the module with some details omitted.
+This is basically the entire code for the module with a few details omitted.
 
 First, we define a record named `Event.State`. In it, we will store all the
 state required for the event to run and contact the server when its time has
