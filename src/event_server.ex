@@ -18,12 +18,12 @@ defmodule EventServer do
     def start do
         # Register the server process so that it can be referred to as
         # EventServer by clients
-        :erlang.register __MODULE__, pid = :erlang.spawn __MODULE__, :init, []
+        Process.register __MODULE__, pid = :erlang.spawn __MODULE__, :init, []
         pid
     end
 
     def start_link do
-        :erlang.register __MODULE__, pid = :erlang.spawn_link __MODULE__, :init, []
+        Process.register __MODULE__, pid = :erlang.spawn_link __MODULE__, :init, []
         pid
     end
 
@@ -33,7 +33,7 @@ defmodule EventServer do
 
     # Create a new event with a unique name
     def add_event(name, description, timeout) do
-        ref = :erlang.make_ref
+        ref = make_ref
         __MODULE__ <- { Process.self, ref, {:add, name, description, timeout} }
         receive do
         match: { ^ref, msg }
@@ -45,7 +45,9 @@ defmodule EventServer do
 
     # Subscribe to event notifications
     def subscribe(pid) do
-        mon = :erlang.monitor :process, :erlang.whereis __MODULE__
+        # Here we can use `whereis` to find out the pid because we have
+        # registered our module in the `start` (and `start_link`) function
+        mon = Process.monitor :erlang.whereis __MODULE__
         __MODULE__ <- { Process.self, mon, {:subscribe, pid} }
         receive do
         match: { ^mon, :ok }

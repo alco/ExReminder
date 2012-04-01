@@ -32,11 +32,11 @@ defmodule Event do
 
     def cancel(pid) do
         # Create a monitor to know when the process dies
-        mon = :erlang.monitor :process, pid
+        mon = Process.monitor pid
         pid <- { Process.self, mon, :cancel }
         receive do
         match: { ^mon, :ok }
-            :erlang.demonitor mon, [:flush]
+            Process.demonitor mon, [:flush]
             :ok
         match: { DOWN, ^mon, :process, ^pid, _reason }
             # The server is down. We're ok with that.
