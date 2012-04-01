@@ -8,16 +8,16 @@
 # A helper function
 # Flushes all currently available messages to standard output.
 flush = fn() ->
-    loop do
-    match:
-        receive do
-        match: x
-            IO.puts "Shell got #{ inspect x }"
-            recur
-        after: 0
-            :ok
-        end
+  loop do
+  match:
+    receive do
+    match: x
+      IO.puts "Shell got #{ inspect x }"
+      recur
+    after: 0
+      :ok
     end
+  end
 end
 
 # Spawn a new Event process
