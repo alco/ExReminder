@@ -23,6 +23,9 @@ jump directly to _First Things First_. (Although you might still find the crash
 course on Erlang syntax useful, as it compares Erlang snippets with
 corresponding Elixir code.)
 
+* auto-gen TOC:
+{:toc}
+
 ## A Byte of Erlang ##
 
 As Elixir's home page puts it,
@@ -118,7 +121,7 @@ are
 * `__LINE__` — returns an integer representing the current line;
 * `__FILE__` — returns a string representing the current file;
 * `__MAIN__` — the main namespace where modules are stored. For instance, `List` can also be accessed as `__MAIN__.List`;
-* `__LOCAL__` — works as a proxy to force a function call to resolve locally (and not be expanded as a macro);
+* `__LOCAL__` — works as a proxy to force a function call to resolve locally (and not be expanded as a macro).
 
 In the `init` function we create a new `State` record passing initial values as
 an orddict. If you prefer more formal syntax, you could rewrite it in one of
