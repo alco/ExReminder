@@ -18,12 +18,12 @@ defmodule EventServer do
   def start do
     # Register the server process so that it can be referred to as
     # EventServer by clients
-    Process.register __MODULE__, pid = :erlang.spawn __MODULE__, :init, []
+    Process.register __MODULE__, pid = Process.spawn __MODULE__, :init, []
     pid
   end
 
   def start_link do
-    Process.register __MODULE__, pid = :erlang.spawn_link __MODULE__, :init, []
+    Process.register __MODULE__, pid = Process.spawn_link __MODULE__, :init, []
     pid
   end
 
