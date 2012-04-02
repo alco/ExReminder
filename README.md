@@ -374,7 +374,7 @@ working on.
 Next, I'm going to bring this [WebSockets demo][13] up to date and later, if
 all goes well, I will try to port the server for Mozilla's [BrowserQuest][14]
 game. If any of these projects sound interesting to you, come join me.
-Find my on IRC (I'm true_droid there) and send a message to the [list][8].
+Find me on IRC (I'm `true_droid` there) or send a message to the [list][8].
 
 
   [1]: http://elixir-lang.org/getting_started/1.html
