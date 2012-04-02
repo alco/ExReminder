@@ -61,7 +61,7 @@ defmodule EventServer do
 
   # Cancel the event with name 'name'
   def cancel(name) do
-    ref = :erlang.make_ref
+    ref = make_ref
     __MODULE__ <- { Process.self, ref, {:cancel, name} }
     receive do
     match: { ^ref, :ok }
