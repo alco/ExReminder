@@ -90,7 +90,7 @@ defmodule EventServer do
   ## Private functions ##
 
   # The main receive loop
-  defp main_loop(state) do
+  def main_loop(state) do
     receive do
     match: { pid, msg_ref, {:subscribe, client} }
       # We'll keep a list of all subscribers and monitor them
