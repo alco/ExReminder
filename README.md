@@ -9,7 +9,7 @@ This is a simple client-server application demonstrating the power of the
 Erlang VM and the cuteness of [Elixir][2]. Based on this [chapter][3] from the
 awesome [Learn You Some Erlang for Great Good!][5] book.
 
-If you have just finished the [Getting Started][1] guide, you should first take
+If you have just finished the [Getting Started guide][1], you should first take
 a look at [this chat demo][4]. It is probably the simplest client-server app that
 can be written in Elixir. Try playing with it for a while until you feel
 comfortable enough writing you own modules and functions.
@@ -40,7 +40,7 @@ concepts is required. Here's a few links to online resources that cover Erlang's
   concise intro to Erlang's syntax. Each code snippet is accompanied by
   equivalent code in Elixir. This is an opportunity for you to not only get
   some exposure to the Erlang's syntax but also review some of the things you
-  have learned in the [Getting Started][1] guide.
+  have learned in the [Getting Started guide][1].
 
 * Erlang's official website has a short [tutorial][9] with pictures that
   briefly describe Erlang's primitives for concurrent programming.
