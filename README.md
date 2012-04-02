@@ -120,19 +120,20 @@ are
 * `__MAIN__` — the main namespace where modules are stored. For instance, `List` can also be accessed as `__MAIN__.List`;
 * `__LOCAL__` — works as a proxy to force a function call to resolve locally (and not be expanded as a macro);
 
-In the `init` function we create a new State record passing initial values as
-an orddict. If you prefer more formal syntax, you could rewrite the line in on
-of the following ways:
+In the `init` function we create a new `State` record passing initial values as
+an orddict. If you prefer more formal syntax, you could rewrite it in one of
+the following ways:
 
 ```elixir
-main_loop State.new [server: server, name: event_name, to_go: delay]
+State.new [server: server, name: event_name, to_go: delay]
 # or
-main_loop State.new [{:server, server}, {:name, event_name}, {:to_go, delay}]
-# or even
-main_loop(State.new [{:server, server}, {:name, event_name}, {:to_go, delay}])
+State.new([server: server, name: event_name, to_go: delay])
+
+# Note, however, that you cannot pass a list of tuples, because `new` expects
+an orddict (which is an _ordered_ list of tuples)
 ```
 
-However, when it doesn't introduce ambiguity, it is recommended to use the first approach.
+When it doesn't introduce ambiguity, it is recommended to use the first approach.
 
 ---
 
