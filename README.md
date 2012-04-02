@@ -80,6 +80,11 @@ server to create an event, the server spawns a new Event process which then
 waits for the specified amount of time before it calls back to the server which
 then forwards the event's name back to the client.
 
+Elixir's `Process` module contains functions that are commonly used when
+dealing with processes. Functions such linking to a process, registering a
+process, creating a monitor, getting access to the process' local dictionary —
+all of those live in the `Process` module.
+
 ```elixir
 defmodule Event do
   defrecord Event.State, server: nil, name: "", to_go: 0
@@ -109,10 +114,11 @@ record for the server module with the same name, we would get a name clash.
 The first three functions are responsible for spawning a new Event process and
 initializing the state with the data provided from outside. Here we call
 Erlang's `spawn` and `spawn_link` functions directly. Elixir may provide
-wrappers for those at some point in the future. `__MODULE__` is one of Elixir's
-read-only pseudo-variables. Similarly to Erlang's `?MODULE`, it expands to the
-current module's name at compile time. The other pseudo-variables in Elixir
-are
+wrappers for those at some point in the future.
+
+`__MODULE__` is one of Elixir's read-only pseudo-variables. Similarly to
+Erlang's `?MODULE`, it expands to the current module's name at compile time.
+The other pseudo-variables in Elixir are
 
 * `__FUNCTION__` — returns a tuple representing the current function by name and arity or nil;
 * `__LINE__` — returns an integer representing the current line;
@@ -212,6 +218,14 @@ going to take a closer look at the event server.
 
 ## The EventServer Module ##
 
+The `EventServer` module will be responsible for creating events and notifying
+subscribed clients when an event is ready to be delivered. Don't forget to keep
+a tab with the [Erlang book][3] open alongside this tutorial, it contains a detailed
+explanation of the decisions we're making while writing the code for the
+server.
+
+We start by defining two record types: `EventServer.State` and `EventServer.Event`.
+
 ```elixir
 defmodule EventServer do
   # We need to keep a list of all pending events and subscribed clients
@@ -223,69 +237,28 @@ defmodule EventServer do
   refer EventServer.Event
 ```
 
+Notice how we `refer` each record type. What this gives us is that we can drop
+everything to the left of the dot when referring to the record inside our
+module. In other words, each time we write `State` or `Event` inside the
+module, the compiler will know that we actually mean `EventServer.State` and
+`EventServer.Event`, respectively.
+
+In the `init` function, we're entering the main loop passing it a new instance
+of the `EventServer.State` record:
+
 ```elixir
-  ## Public API ##
-
-  def start do
-    Process.register __MODULE__, pid = :erlang.spawn __MODULE__, :init, []
-    pid
-  end
-
-  def start_link do
-    Process.register __MODULE__, pid = :erlang.spawn_link __MODULE__, :init, []
-    pid
-  end
-
   def init do
     main_loop State.new
   end
 ```
 
-```elixir
-  # Create a new event with a unique name
-  def add_event(name, description, timeout) do
-    ref = make_ref
-    __MODULE__ <- { Process.self, ref, {:add, name, description, timeout} }
-    receive do
-    match: { ^ref, msg }
-      msg
-    after: 5000
-      { :error, :timeout }
-    end
-  end
-```
-
-```elixir
-  # Subscribe to event notifications
-  def subscribe(pid) do
-    # Here we can use `whereis` to find out the pid because we have
-    # registered our module in the `start` (and `start_link`) function
-    mon = Process.monitor :erlang.whereis __MODULE__
-    __MODULE__ <- { Process.self, mon, {:subscribe, pid} }
-    receive do
-    match: { ^mon, :ok }
-      { :ok, mon }
-    match: { 'DOWN', ^mon, :process, ^pid, reason }
-      { :error, reason }
-    after: 5000
-      { :error, :timeout }
-    end
-  end
-```
-
-```elixir
-  # Cancel the event with name 'name'
-  def cancel(name) do
-    ref = :erlang.make_ref
-    __MODULE__ <- { Process.self, ref, {:cancel, name} }
-    receive do
-    match: { ^ref, :ok }
-      :ok
-    after: 5000
-      { :error, :timeout }
-    end
-  end
-```
+The next couple of functions in `EventServer` don't introduce new concepts, so
+we'll skip them. One thing I'd like to point out though, in the `listen`
+function below, is that we can prepend argument and variable names with
+underscore `_`. Because some of the variables are not used inside the match
+body, the compiler would emit a warning if those variables did not start with
+underscore. Alternatively, we could use a single underscore in place of a
+variable name to ignore it completely.
 
 ```elixir
   # Wait until all events have fired or the timeout has passed
@@ -299,6 +272,16 @@ defmodule EventServer do
   end
 ```
 
+---
+
+Now, let's take a look at the server's main loop which is pretty large,
+although its basic structure is rather simple.
+
+---
+
+Lastly, we have a private function that broadcasts a message to all subscribed
+clients:
+
 ```elixir
   # Send 'msg' to each subscribed client
   def send_to_clients(msg, clients) do
@@ -307,6 +290,15 @@ defmodule EventServer do
     end
   end
 ```
+
+`Enum` is a new module in Elixir, it provides common functions that deal will
+collections such as `map`, `filter`, `all?`, `split`, etc. Take a look at its
+[source code][11] which is heavily documented.
+
+## Testing The Server ##
+
+...
+
 
   [1]: http://elixir-lang.org/getting_started/1.html
   [2]: http://elixir-lang.org/
@@ -318,3 +310,4 @@ defmodule EventServer do
   [8]: http://groups.google.com/group/elixir-lang-core
   [9]: http://www.erlang.org/course/concurrent_programming.html
   [10]: http://www.erlang.org/doc/getting_started/users_guide.html
+  [11]: https://github.com/elixir-lang/elixir/blob/master/lib/enum.ex
