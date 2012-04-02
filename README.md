@@ -41,7 +41,7 @@ concepts is required. Here's a few links to online resources that cover Erlang's
 * Erlang's official website has a short [tutorial][9] with pictures that
   briefly describe Erlang's primitives for concurrent programming.
 
-* A bigger and more comprehensive [guide][10] from Erlang's official
+* A larger and more comprehensive [guide][10] from Erlang's official
   documentation site.
 
 * I have mentioned that the code for this tutorial is based on a chapter from
@@ -137,6 +137,8 @@ When it doesn't introduce ambiguity, it is recommended to use the first approach
 
 ---
 
+Next, we have a function for cancelling an event.
+
 ```elixir
   def cancel(pid) do
     # Create a monitor to know when the process dies
@@ -153,12 +155,11 @@ When it doesn't introduce ambiguity, it is recommended to use the first approach
   end
 ```
 
-Next, we have a function for cancelling the event. This is done by sending a
-`:cancel` message to the event process which is then received in the main loop.
-If we look closely at the `main_loop` function, we'll that all it does is
-hanging waiting for the `:cancel` message to arrive. Once it receives the
-message, it simply returns `:ok` and exists the loop, thus terminating the
-process.
+This is done by sending a `:cancel` message to the event process which is then
+received in the main loop.  If we look closely at the `main_loop` function
+below, we'll see that all it does is hang waiting for the `:cancel` message to
+arrive.  Once it receives the message, it simply returns `:ok` and exists the
+loop, thus terminating the process.
 
 We use a left-arrow operator `<-` to send a message (Erlang uses `!` for the
 same purpose). Also note the use of the caret `^` symbol. When you do pattern
@@ -168,7 +169,7 @@ with a caret.
 
 ---
 
-The last function in our Event module is the main loop of the process.
+The last function in our `Event` module is the main loop of the process.
 
 ```elixir
   defp main_loop(state) do
@@ -188,7 +189,7 @@ The last function in our Event module is the main loop of the process.
 
 It is not actually a loop, strictly speaking, but you get the point. Every
 Event process spends most of its lifetime in this function. Other than the fact
-that we use `defp` instead of `def` to keep this function private to the Event
+that we use `defp` instead of `def` to keep this function private to the `Event`
 module, there is nothing new in this particular piece of code.
 
 ## Testing The Event Module ##
@@ -196,15 +197,15 @@ module, there is nothing new in this particular piece of code.
 Notice how our `Event` module doesn't depend on the server module or any other
 module for that matter. All it does is provide an interface for spawning new
 event processes and cancelling them. This approach makes it easy to test the
-Event module separately and make sure eveything works as expected.
+`Event` module in isolation and make sure eveything works as expected.
 
-Open the `test_event.exs` file and paste its contents into a running `iex`
-instance. Make sure everything works as expected: the `iex` process
-successfully receives a `{ :done, "Event" }` message from the first spawned
-event process. Then we create another event with a bigger timeout value and
-cancel it before the timeout runs out. Play around with it a little, spawning
-multiple events and using the provided `flush` function to check that you
-receive reminders from the spawned events.
+Launch `iex` inside the project's directory, then open the `test_event.exs`
+file and paste its contents into the running Elixir shell. Make sure everything
+is working as expected: the `iex` process successfully receives a `{ :done,
+"Event" }` message from the first spawned event process. Then we create another
+event with a larger timeout value and cancel it before the timeout runs out.
+Play around with it for a while, spawning multiple events and using the provided
+`flush` function to check that you receive reminders from the spawned events.
 
 Once you're satisfied with the result, move on to the next section where we're
 going to take a closer look at the event server.
