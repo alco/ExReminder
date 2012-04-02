@@ -359,10 +359,22 @@ The next step you might take is walk through the code yourself, it is
 abundantly commented. Every time you stumble upon an unfamiliar concept, try
 playing with it in the shell and see what happens.
 
-## Epilogue ##
+## Where to go Next ##
 
-Congratulations! You have now a pretty solid understanding of what it takes to
-write a client-server application using Elixir.
+Congratulations! You now have quite a solid understanding of what it takes to
+write a client-server application using Elixir. Ready for a tougher challenge?
+Great! At the moment I'm further refining this tutorial. You may have noticed
+that some features like supervisor implementation and using a formatted date to
+set event timouts are described in the book, but are missing in this tutorial.
+This is temporary, see the TODO file for a list of things to be added soon. If
+you'd like to help me out, feel free to fork the project and start hacking.
+Also send a note to the [mailing list][8] so that I know which task you're
+working on.
+
+Next, I'm going to bring this [WebSockets demo][13] up to date and later, if
+all goes well, I will try to port the server for Mozilla's BrowserQuest
+adventure. If any of these projects sound interesting to you, come join me.
+Find my on IRC (I'm true_droid there) and send a message to the [list][8].
 
 
   [1]: http://elixir-lang.org/getting_started/1.html
@@ -377,3 +389,4 @@ write a client-server application using Elixir.
   [10]: http://www.erlang.org/doc/getting_started/users_guide.html
   [11]: https://github.com/elixir-lang/elixir/blob/master/lib/enum.ex
   [12]: https://github.com/elixir-lang/elixir/blob/master/lib/process.ex
+  [13]: https://github.com/josevalim/elixir-websockets-demo/tree/final/
