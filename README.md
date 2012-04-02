@@ -1,6 +1,10 @@
 ExReminder
 ==========
 
+***Important notice*** _Elixir is still being actively developed, so the code
+in this tutorial might break. If it doesn't work for you, please file an issue
+or send a note to the [mailing list][8]. Thanks for understanding :)_
+
 This is a simple client-server application demonstrating the power of the
 Erlang VM and the cuteness of [Elixir][2]. Based on this [chapter][3] from the
 awesome [Learn You Some Erlang for Great Good!][5] book.
@@ -82,7 +86,7 @@ then forwards the event's name back to the client.
 
 ```elixir
 defmodule Event do
-  defrecord Event.State, server: nil, name: "", to_go: 0
+  defrecord State, server: nil, name: "", to_go: 0
 
   ## Public API ##
 
@@ -99,23 +103,23 @@ defmodule Event do
   end
 ```
 
-First, we define a record named `Event.State`. In it we will store all the
+First, we define a record type named `Event.State`. In it we will store all the
 state required for the event to run and contact the server when its time has
-run out. Note that we intentionally give the record a compound name to reflect
-its relation to the `Event` module. Records in Elixir leave in a global
-namespace.  So, if we named this record simply `State` and then created another
-record for the server module with the same name, we would get a name clash.
+run out. Notice how the record type automatically inherits the name from its
+parent module, so a nested record type `Record` in module `Module` will always
+have the name `Module.Record` when used outside of the module. But for internal
+use it can be referenced by its local name which in our case is simply `State`.
 
 Elixir's `Process` module contains functions that are commonly used when
-dealing with processes. Functions such linking to a process, registering a
+dealing with processes. Functions such as linking to a process, registering a
 process, creating a monitor, getting access to the process' local dictionary —
 all of those live in the `Process` module, the documented source code for which
 is available [here][12].
 
 The first three functions are responsible for spawning a new event process and
 initializing the state with the data provided by the caller. Here we call
-Erlang's `spawn` and `spawn_link` functions directly. Elixir may provide
-wrappers for those at some point in the future.
+Erlang's `spawn` and `spawn_link` functions directly purely for demonstrational
+purposes. Elixir provides equivalent built-in functions.
 
 `__MODULE__` is one of Elixir's read-only pseudo-variables. Similarly to
 Erlang's `?MODULE`, it expands to the current module's name at compile time.
@@ -226,27 +230,21 @@ a tab with the [Erlang book][3] open alongside this tutorial, it contains a deta
 explanation of the decisions we're making while writing the code for the
 server.
 
-We start by defining two record types: `EventServer.State` and `EventServer.Event`.
+Similarly to the `Event` module, our server will need to keep some state in
+order to be of any use. Here we defined two record types: `EventServer.State`
+and `EventServer.Event`:
 
 ```elixir
 defmodule EventServer do
   # We need to keep a list of all pending events and subscribed clients
-  defrecord EventServer.State, events: [], clients: []
-  refer EventServer.State
+  defrecord State, events: [], clients: []
 
   # Event description
-  defrecord EventServer.Event, name: "", description: "", pid: nil, timeout: 0
-  refer EventServer.Event
+  defrecord Event, name: "", description: "", pid: nil, timeout: 0
 ```
 
-Notice how we `refer` each record type. What this gives us is that we can drop
-everything to the left of the dot when referring to the record inside our
-module. In other words, each time we write `State` or `Event` inside the
-module, the compiler will know that we actually mean `EventServer.State` and
-`EventServer.Event`, respectively.
-
 In the `init` function, we're entering the main loop passing it a new instance
-of the `EventServer.State` record:
+of the `State` record:
 
 ```elixir
   def init do
@@ -255,7 +253,7 @@ of the `EventServer.State` record:
 ```
 
 The next couple of functions in `EventServer` don't introduce new concepts,
-they simply wrap the messaging protocol used by the server in a simple API, so
+they simply wrap the messaging protocol used by the server in a neat API, so
 we'll skip them. One thing I'd like to point out though, in the `listen`
 function below, is that we can prepend argument and variable names with
 underscore `_`. Because some of the variables are not used inside the match
@@ -281,7 +279,7 @@ although its basic structure is rather simple. Here's what its skeleton looks
 like:
 
 ```elixir
-  defp main_loop(state) do
+  def main_loop(state) do
     receive do
     match: { pid, msg_ref, {:subscribe, client} }
       # Subscribe a client identified by the `pid`
@@ -336,6 +334,12 @@ exactly what actions are being performed and why, read carefully through the
 explanation in the book and take a look at the code in the **event_server.ex**
 file.
 
+In the source code for our server you'll find another example of using Erlang
+modules — we use the `orddict` module for book-keeping of clients and events.
+Elixir currently provides the `Keyword` module that can only have atoms as
+keys, so we're better off using Erlang's native `orddict` module for the time
+being.
+
 ---
 
 Lastly, we have a private function that broadcasts a message to all subscribed
@@ -365,14 +369,16 @@ The next step you might take is walk through the code yourself, it is
 abundantly commented. Every time you stumble upon an unfamiliar concept, try
 playing with it in the shell and see what happens.
 
+## Hot Code Swapping ##
+
 One more thing I'd like to mention is how we can test hot code swapping in a
 running application. Compile the source code as before and start up `iex` in
 the project's root directory. Copy the contents of the **test_server.exs** file
 into the shell once again so that we have a server instance running.
 
-Now open another terminal tab or window and navigate to project's root. Make
+Now open another terminal tab or window and navigate to the project's root. Make
 some change in the code, for instance, change the message the server sends in
-response to an `:add` request. This is line 122 in the **event_server.ex** file.
+response to an `:add` request. This is line 120 in the **event_server.ex** file.
 Here's what mine looks like after the change:
 
 ```elixir
@@ -383,34 +389,49 @@ Then you need to recompile the source by invoking
 
     make
 
-Now go back to the Terminal tab you have `iex` running in and evaluate the following expression:
+Now go back to the Terminal tab you have `iex` running in and evaluate the following expressions:
 
 ```elixir
+# Ask Erlang to reload our EventServer module
+:code.load_file EventServer
+#=> {:module,EventServer}
+
+EventServer.add_event "1", "", 1000
+#=> :ok
+
+# The new code is now loaded, but our server process is still running the old
+# one. We need to tell it that it should make a qualified call to the `main_loop`
+# function in order to upgrade to the newest available version of the module.
 EventServer <- :code_change
+#=> :code_change
 
 # Make sure the code has been reloaded
 EventServer.add_event "New event", "No description", 100
 #=> :sir_yes_sir
 ```
 
-That's it! You have just successfully updated the code of a running server.
+That's it! You have just successfully updated the code of a running program.
+Wasn't it fun?
 
 ## Where to go Next ##
 
 Congratulations! You now have quite a solid understanding of what it takes to
 write a client-server application using Elixir. Ready for a tougher challenge?
-Great! At the moment I'm further refining this tutorial. You may have noticed
-that some features like supervisor implementation and using a formatted date to
-set event timouts are described in the book, but are missing in this tutorial.
-This is temporary, see the TODO file for a list of things to be added soon. If
+Great! At the moment I'm still refining this tutorial. You may have noticed
+that some features like supervisor implementation and formatted date for event
+timeouts are described in the book, but are missing in this tutorial. This is
+temporary, please see the TODO file for a list of things to be added soon. If
 you'd like to help me out, feel free to fork the project and start hacking.
 Also send a note to the [mailing list][8] so that I know which task you're
 working on.
 
 Next, I'm going to bring this [WebSockets demo][13] up to date and later, if
 all goes well, I will try to port the server for Mozilla's [BrowserQuest][14]
-game. If any of these projects sound interesting to you, come join me.
-Find me on IRC (I'm `true_droid` there) or send a message to the [list][8].
+game. If any of these projects sound interesting to you, come join me!  Find me
+on IRC (I'm `true_droid` on the **#elixir-lang** channel) or send a message to
+the [list][8].
+
+Good luck!
 
 
   [1]: http://elixir-lang.org/getting_started/1.html
