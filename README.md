@@ -19,7 +19,9 @@ resources.
 
 If you are already familiar with Erlang and feel confident enough to get your
 hands dirty with some Elixir code, you may safely skip the next section and
-jump directly to _First Things First_.
+jump directly to _First Things First_. (Although you might still find the crash
+course on Erlang syntax useful, as it compares Erlang snippets with
+corresponding Elixir code.)
 
 ## A Byte of Erlang ##
 
