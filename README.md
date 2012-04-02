@@ -23,9 +23,6 @@ jump directly to _First Things First_. (Although you might still find the crash
 course on Erlang syntax useful, as it compares Erlang snippets with
 corresponding Elixir code.)
 
-* auto-gen TOC:
-{:toc}
-
 ## A Byte of Erlang ##
 
 As Elixir's home page puts it,
