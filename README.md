@@ -29,11 +29,11 @@ As Elixir's home page puts it,
 
 > Elixir is a programming language built on top of the Erlang VM.
 
-So, in order to write real application with Elixir, familiarity with Erlang's
+So, in order to write a real application with Elixir, familiarity with Erlang's
 concepts is required. Here's a few links to online resources that cover Erlang's fundamentals:
 
 * This [Erlang Syntax: A Crash Course][6] (authored by yours truly) provides a
-  concise intro to Erlang's syntax. Each code snippet is accompanied by an
+  concise intro to Erlang's syntax. Each code snippet is accompanied by
   equivalent code in Elixir. This is an opportunity for you to not only get
   some exposure to the Erlang's syntax but also review some of the things you
   have learned in the [Getting Started][1] guide.
@@ -48,23 +48,24 @@ concepts is required. Here's a few links to online resources that cover Erlang's
   get to [The Hitchhiker's Guide to Concurrency][7] chapter, that's where the
   real fun starts. It is also a good starting point for this tutorial since
   this chapter and the ones that follow it explain many of the concepts we'll
-  see in the source code for ExReminder.
+  see in ExReminder's source code.
 
-If you're looking at all this and start feeling discouraged, don't be! After
-all, you can skip all this and dive straight into the code. You are free to
-take any approach you wish as long as you enjoy the process. Remember that in
-case you have any difficulties, don't be hesitant to visit the `#elixir-lang`
-channel on **irc.freenode.net** or send a message to the [mailing list][9]. I
-can assure you, there will definitely be someone willing to help.
+If you're looking at all this and start feeling discouraged, please don't!
+After all, you can the theory and dive straight into the code. You are free to
+take any approach you wish as long as you're enjoying the process. Remember
+that in case of any difficulties, you can always visit the **#elixir-lang**
+channel on **irc.freenode.net** or send a message to the [mailing list][8]. I
+can assure you, there will be someone willing to help.
 
 ## First Things First ##
 
-Before writing a single line of code, we have one prerequisite that needs to be done. , refer
-to the aforementioned [chapter][3] and read the first couple of sections where
-you'll find a detailed description (with pictures!) of the architecture and
-messaging protocol for our application. As soon as you've got basic
-understanding of the problem and the proposed design for solving it, come back
-here and we shall start our walk through the code.
+Before writing a single line of code, we need think a little about the problem
+we're facing and the goals we're trying to achieve. Refer to the aforementioned
+[chapter][3] and read the first couple of sections where you'll find a detailed
+description (with pictures!) of the architecture and messaging protocol for our
+application. As soon as you've got a basic understanding of the problem and the
+proposed design for solving it, come back here and we shall start our walk
+through the code.
 
 ## The Event Module ##
 
