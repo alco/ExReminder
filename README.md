@@ -75,10 +75,10 @@ through the code.
 
 ## The Event Module ##
 
-We'll start with the `Event` module. When a client asks the server to create an
-event, the server spawns a new Event process and then the event process waits
-for the specified amount of time before it calls back to the server which then
-forwards the event's name back to the client.
+We'll start with the `Event` module. In our application, when a client asks the
+server to create an event, the server spawns a new Event process which then
+waits for the specified amount of time before it calls back to the server which
+then forwards the event's name back to the client.
 
 ```elixir
 defmodule Event do
@@ -106,10 +106,19 @@ its relation to the `Event` module. Records in Elixir leave in a global
 namespace.  So, if we named this record simply `State` and then created another
 record for the server module with the same name, we would get a name clash.
 
-The first three functions are responsible for spawning a new `Event` process
-and initializing the state with the data provided from outside. Here we call
+The first three functions are responsible for spawning a new Event process and
+initializing the state with the data provided from outside. Here we call
 Erlang's `spawn` and `spawn_link` functions directly. Elixir may provide
-wrappers for those at some point in the future.
+wrappers for those at some point in the future. `__MODULE__` is one of Elixir's
+read-only pseudo-variables. Similarly to Erlang's `?MODULE`, it expands to the
+current module's name at compile time. The other pseudo-variables in Elixir
+are
+
+* `__FUNCTION__` — returns a tuple representing the current function by name and arity or nil;
+* `__LINE__` — returns an integer representing the current line;
+* `__FILE__` — returns a string representing the current file;
+* `__MAIN__` — the main namespace where modules are stored. For instance, `List` can also be accessed as `__MAIN__.List`;
+* `__LOCAL__` — works as a proxy to force a function call to resolve locally (and not be expanded as a macro);
 
 In the `init` function we create a new State record passing initial values as
 an orddict. If you prefer more formal syntax, you could rewrite the line in on
