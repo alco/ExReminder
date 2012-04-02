@@ -19,11 +19,11 @@ defmodule Event do
   ## Public API ##
 
   def start(event_name, delay) do
-    Process.spawn __MODULE__, :init, [Process.self, event_name, delay]
+    spawn __MODULE__, :init, [Process.self, event_name, delay]
   end
 
   def start_link(event_name, delay) do
-    Process.spawn_link __MODULE__, :init, [Process.self, event_name, delay]
+    spawn_link __MODULE__, :init, [Process.self, event_name, delay]
   end
 
   def init(server, event_name, delay) do
