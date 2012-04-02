@@ -5,31 +5,62 @@ This is a simple client-server application demonstrating the power of the
 Erlang VM and the cuteness of [Elixir][2]. Based on this [chapter][3] from the
 awesome ***Learn You Some Erlang for Great Good!*** book.
 
-If you are have just read the [Getting Started][1] guide, you should first take
-a look at this simple chat demo. It is probably the simplest client-server app
-that can be written in Elixir. Try playing with it for a while until you feel
-comfortable enough with writing you own modules and functions.
+If you have just finished the [Getting Started][1] guide, you should first take
+a look at [this chat demo][4]. It is probably the simplest client-server app that
+can be written in Elixir. Try playing with it for a while until you feel
+comfortable enough writing you own modules and functions.
 
 In this walkthrough I'm going to guide you through the code of a slightly more
 advanced application which is also based on the client-server model. I'm
 expecting that you are familiar with Erlang's core concepts such as processes
-and message passing. If you're new to the Erlang/OTP ecosystem, don't be
-discouraged. Try reading through the present tutorial. In case you find it
-difficult to grasp at first, take a look at the following section where I give
-a brief introduction into Erlang and point at a few helpful online resources
-that will get you started quickly.
+and message passing. If you're new to the Erlang/OTP ecosystem, take a look at
+the following section where you'll find pointers to a number of helpful online
+resources.
 
-And if you are already familiar with Erlang and want to get more exposure to
-Elixir, you may safely skip the following section and jump straight to _Getting
-Practical_ further down the page.
+If you are already familiar with Erlang and think you'r ready to get your hands
+dirty with some Elixir code, you may safely skip the next section and jump
+directly to _First Things First_.
 
-## A Quick Intro to Erlang ##
+## A Byte of Erlang ##
 
-...
+As Elixir's home page puts it,
 
-## Laying Out The Design For Our Application ##
+> Elixir is a programming language built on top of the Erlang VM.
 
-Now when you're all set to dive into building a real working application, refer
+So, in order to write real application with Elixir, familiarity with Erlang's
+concepts is required.
+
+I have mentioned that the code for this tutorial is based on a chapter from the
+great [Learn You Some Erlang for Great Good!][5] book. It is an excellent
+introduction to Erlang, its design principles, standard library, best practices
+and much more. Don't get discouraged, you don't need to read the whole book.
+But you will at least need to get some familiarity with Erlang syntax anyway.
+I've got a couple of useful pointer for you, those will get you up and running
+in no time.
+
+* This [Erlang Syntax: A Crash Course][6] provides a digest of the absolute
+  minimum amount of knowledge you need to get to comfortably read Erlang code
+  snippets and documentation. Each code snippet is accompanied by corresponding
+  code in Elixir. This is an opportunity for you get some exposure to the
+  Erlang's syntax and solidify what you've learned in the Getting Started
+  guide.
+
+* The [book][5] itself. Once you have read through the aforementioned crash
+  course, you'll be able to safely skip the first couple of chapters in the
+  book that deal with Erlang syntax mostly. Once you get to [The Hitchhiker's
+  Guide to Concurrency][7] chapter, that's where the real fun starts and also
+  the foundations the present tutorial is based on are layed out.
+
+If you're looking at all this and start feeling discouraged, don't be! After
+all, you can skip all this and dive straight into the code if you're confident
+enough. Remember that when have any difficulties, don't hesitate to stop by the
+`#elixir-lang` IRC channel on **irc.freenode.net** or send a message to the
+[mailing list][9]. I can assure you there be some one willing to help you
+traverse any obstacles you might stumble upon.
+
+## First Things First ##
+
+Before writing a single line of code, we have one prerequisite that needs to be done. , refer
 to the aforementioned [chapter][3] and read the first couple of sections where
 you'll find a detailed description (with pictures!) of the architecture and
 messaging protocol for our application. As soon as you've got basic
@@ -43,7 +74,7 @@ event, the server spawns a new process from the `Event` module and then it
 waits the specified amount of time before it calls back to the server which
 then forwards the event's metadata back to the client.
 
-Let's first get a birds-eye view at the code structure we're going to build.
+Let's first get a bird's-eye view at the code structure we're going to build.
 
 ```elixir
 defmodule Event do
@@ -128,3 +159,8 @@ implement the server.
   [1]: http://elixir-lang.org/getting_started/1.html
   [2]: http://elixir-lang.org/
   [3]: http://learnyousomeerlang.com/designing-a-concurrent-application
+  [4]: https://gist.github.com/2221616
+  [5]: http://learnyousomeerlang.com/
+  [6]: https://github.com/alco/elixir/wiki/Erlang-Syntax:-A-Crash-Course
+  [7]: http://learnyousomeerlang.com/the-hitchhikers-guide-to-concurrency
+  [8]: http://groups.google.com/group/elixir-lang-core
