@@ -25,8 +25,8 @@ defmodule EventServer do
     pid
   end
 
-  def init do
-    main_loop State.new
+  def init(state // State.new) do
+    main_loop state
   end
 
   # Create a new event with a unique name
@@ -90,7 +90,7 @@ defmodule EventServer do
   ## Private functions ##
 
   # The main receive loop
-  def main_loop(state) do
+  defp main_loop(state) do
     receive do
     match: { pid, msg_ref, {:subscribe, client} }
       # We'll keep a list of all subscribers and monitor them
@@ -162,10 +162,13 @@ defmodule EventServer do
 
     match: :code_change
       # New code has arrived! Time to upgrade.
+      #
       # The upgrade process is performed by using the qualified name
-      # __MODULE__.main_loop. Calling 'main_loop' instead would continue
-      # running the old code.
-      __MODULE__.main_loop state
+      # __MODULE__.init. Calling 'main_loop' instead would continue running the
+      # old code. We can't to a call __MODULE__.main_loop, because 'main_loop'
+      # is a private function. For this reason, we're doing a recursive call
+      # through the 'init' function.
+      __MODULE__.init state
 
     match: else
       # Someone sent us a message we don't understand
