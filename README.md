@@ -211,7 +211,7 @@ convenience. Simply execute `make` from the project's root to compile the
 source code for our modules.
 
 Once the code is compiled, launch `iex` inside the project's directory, then
-open the `test_event.exs` file and paste its contents into the running Elixir
+open the **test_event.exs** file and paste its contents into the running Elixir
 shell. Make sure everything is working as expected: the `iex` process
 successfully receives a `{ :done, "Event" }` message from the first spawned
 event process. Then we create another event with a larger timeout value and
@@ -361,7 +361,7 @@ collections such as `map`, `filter`, `all?`, `split`, etc. Take a look at its
 ## Testing The Server ##
 
 As with the `Event` module, I've written a small test-script to check that the
-server works properly. It is located in the `test_server.exs` file. As before,
+server works properly. It is located in the **test_server.exs** file. As before,
 start up `iex` in the project's directory and copy the file contents into the
 shell.
 
