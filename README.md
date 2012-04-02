@@ -3,7 +3,7 @@ ExReminder
 
 This is a simple client-server application demonstrating the power of the
 Erlang VM and the cuteness of [Elixir][2]. Based on this [chapter][3] from the
-awesome ***Learn You Some Erlang for Great Good!*** book.
+awesome [Learn You Some Erlang for Great Good!][5] book.
 
 If you have just finished the [Getting Started][1] guide, you should first take
 a look at [this chat demo][4]. It is probably the simplest client-server app that
@@ -11,15 +11,15 @@ can be written in Elixir. Try playing with it for a while until you feel
 comfortable enough writing you own modules and functions.
 
 In this walkthrough I'm going to guide you through the code of a slightly more
-advanced application which is also based on the client-server model. I'm
-expecting that you are familiar with Erlang's core concepts such as processes
-and message passing. If you're new to the Erlang/OTP ecosystem, take a look at
-the following section where you'll find pointers to a number of helpful online
+advanced application which also implements a client-server model. I'm expecting
+that you are familiar with Erlang's core concepts such as processes and message
+passing. If you're new to the Erlang/OTP ecosystem, take a look at the
+following section where you'll find pointers to a number of helpful online
 resources.
 
-If you are already familiar with Erlang and think you'r ready to get your hands
-dirty with some Elixir code, you may safely skip the next section and jump
-directly to _First Things First_.
+If you are already familiar with Erlang and feel confident enough to get your
+hands dirty with some Elixir code, you may safely skip the next section and
+jump directly to _First Things First_.
 
 ## A Byte of Erlang ##
 
@@ -28,35 +28,32 @@ As Elixir's home page puts it,
 > Elixir is a programming language built on top of the Erlang VM.
 
 So, in order to write real application with Elixir, familiarity with Erlang's
-concepts is required.
+concepts is required. Here's a few links to online resources that cover Erlang's fundamentals:
 
-I have mentioned that the code for this tutorial is based on a chapter from the
-great [Learn You Some Erlang for Great Good!][5] book. It is an excellent
-introduction to Erlang, its design principles, standard library, best practices
-and much more. Don't get discouraged, you don't need to read the whole book.
-But you will at least need to get some familiarity with Erlang syntax anyway.
-I've got a couple of useful pointer for you, those will get you up and running
-in no time.
+* This [Erlang Syntax: A Crash Course][6] (authored by yours truly) provides a
+  concise intro to Erlang's syntax. Each code snippet is accompanied by an
+  equivalent code in Elixir. This is an opportunity for you to not only get
+  some exposure to the Erlang's syntax but also review some of the things you
+  have learned in the [Getting Started][1] guide.
 
-* This [Erlang Syntax: A Crash Course][6] provides a digest of the absolute
-  minimum amount of knowledge you need to get to comfortably read Erlang code
-  snippets and documentation. Each code snippet is accompanied by corresponding
-  code in Elixir. This is an opportunity for you get some exposure to the
-  Erlang's syntax and solidify what you've learned in the Getting Started
-  guide.
-
-* The [book][5] itself. Once you have read through the aforementioned crash
-  course, you'll be able to safely skip the first couple of chapters in the
-  book that deal with Erlang syntax mostly. Once you get to [The Hitchhiker's
-  Guide to Concurrency][7] chapter, that's where the real fun starts and also
-  the foundations the present tutorial is based on are layed out.
+* I have mentioned that the code for this tutorial is based on a chapter from
+  the great [Learn You Some Erlang for Great Good!][5] book. It is an excellent
+  introduction to Erlang, its design principles, standard library, best
+  practices and much more. If you are serious about Elixir, you'll want to get
+  a solid understanding of Erlang's fundamentals. Once you have read through
+  the crash course mentioned above, you'll be able to safely skip the first
+  couple of chapters in the book that mostly deal with Erlang syntax. When you
+  get to [The Hitchhiker's Guide to Concurrency][7] chapter, that's where the
+  real fun starts. It is also a good starting point for this tutorial since
+  this chapter and the ones that follow it explain many of the concepts we'll
+  see in the source code for ExReminder.
 
 If you're looking at all this and start feeling discouraged, don't be! After
-all, you can skip all this and dive straight into the code if you're confident
-enough. Remember that when have any difficulties, don't hesitate to stop by the
-`#elixir-lang` IRC channel on **irc.freenode.net** or send a message to the
-[mailing list][9]. I can assure you there be some one willing to help you
-traverse any obstacles you might stumble upon.
+all, you can skip all this and dive straight into the code. You are free to
+take any approach you wish as long as you enjoy the process. Remember that in
+case you have any difficulties, don't be hesitant to visit the `#elixir-lang`
+channel on **irc.freenode.net** or send a message to the [mailing list][9]. I
+can assure you, there will definitely be someone willing to help.
 
 ## First Things First ##
 
