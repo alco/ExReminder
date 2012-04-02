@@ -10,7 +10,7 @@ a look at [this chat demo][4]. It is probably the simplest client-server app tha
 can be written in Elixir. Try playing with it for a while until you feel
 comfortable enough writing you own modules and functions.
 
-In this walkthrough I'm going to guide you through the code of a slightly more
+In this tutorial I'm going to guide you through the code of a slightly more
 advanced application which also implements a client-server model. I'm expecting
 that you are familiar with Erlang's core concepts such as processes and message
 passing. If you're new to the Erlang/OTP ecosystem, take a look at the
@@ -80,11 +80,6 @@ server to create an event, the server spawns a new Event process which then
 waits for the specified amount of time before it calls back to the server which
 then forwards the event's name back to the client.
 
-Elixir's `Process` module contains functions that are commonly used when
-dealing with processes. Functions such linking to a process, registering a
-process, creating a monitor, getting access to the process' local dictionary —
-all of those live in the `Process` module.
-
 ```elixir
 defmodule Event do
   defrecord Event.State, server: nil, name: "", to_go: 0
@@ -111,8 +106,14 @@ its relation to the `Event` module. Records in Elixir leave in a global
 namespace.  So, if we named this record simply `State` and then created another
 record for the server module with the same name, we would get a name clash.
 
-The first three functions are responsible for spawning a new Event process and
-initializing the state with the data provided from outside. Here we call
+Elixir's `Process` module contains functions that are commonly used when
+dealing with processes. Functions such linking to a process, registering a
+process, creating a monitor, getting access to the process' local dictionary —
+all of those live in the `Process` module, the documented source code for which
+is available [here][12].
+
+The first three functions are responsible for spawning a new event process and
+initializing the state with the data provided by the caller. Here we call
 Erlang's `spawn` and `spawn_link` functions directly. Elixir may provide
 wrappers for those at some point in the future.
 
@@ -127,19 +128,18 @@ The other pseudo-variables in Elixir are
 * `__LOCAL__` — works as a proxy to force a function call to resolve locally (and not be expanded as a macro).
 
 In the `init` function we create a new `State` record passing initial values as
-an orddict. If you prefer more formal syntax, you could rewrite it in one of
+an orddict. If you prefer a more formal syntax, you could rewrite it in one of
 the following ways:
 
 ```elixir
 State.new [server: server, name: event_name, to_go: delay]
 # or
 State.new([server: server, name: event_name, to_go: delay])
-
-# Note, however, that you cannot pass a list of tuples, because `new` expects
-an orddict (which is an _ordered_ list of tuples)
 ```
 
-When it doesn't introduce ambiguity, it is recommended to use the first approach.
+Note, however, that you cannot pass a list of tuples, because `new` expects an
+orddict (which is an _ordered_ list of tuples).  When it doesn't introduce
+ambiguity, it is recommended to use the first approach.
 
 ---
 
@@ -182,12 +182,9 @@ The last function in our `Event` module is the main loop of the process.
     server = state.server
     receive do
     match: {^server, ref, :cancel}
-      # After sending :ok to the server, we leave this function basically
-      # terminating the process. Thus, no reminder shall be sent.
       server <- { ref, :ok }
 
     after: state.to_go * 1000
-      # The timeout has passed, now is the time to remind the server.
       server <- { :done, state.name }
     end
   end
@@ -205,13 +202,18 @@ module for that matter. All it does is provide an interface for spawning new
 event processes and cancelling them. This approach makes it easy to test the
 `Event` module in isolation and make sure eveything works as expected.
 
-Launch `iex` inside the project's directory, then open the `test_event.exs`
-file and paste its contents into the running Elixir shell. Make sure everything
-is working as expected: the `iex` process successfully receives a `{ :done,
-"Event" }` message from the first spawned event process. Then we create another
-event with a larger timeout value and cancel it before the timeout runs out.
-Play around with it for a while, spawning multiple events and using the provided
-`flush` function to check that you receive reminders from the spawned events.
+Before running the code, we need to compile it. I have provided a Makefile for
+convenience. Simply execute `make` from the project's root to compile the
+source code for our modules.
+
+Once the code is compiled, launch `iex` inside the project's directory, then
+open the `test_event.exs` file and paste its contents into the running Elixir
+shell. Make sure everything is working as expected: the `iex` process
+successfully receives a `{ :done, "Event" }` message from the first spawned
+event process. Then we create another event with a larger timeout value and
+cancel it before the timeout runs out. Play around with it for a while,
+spawning multiple events and using the provided `flush` function to check that
+you receive reminders from the spawned events.
 
 Once you're satisfied with the result, move on to the next section where we're
 going to take a closer look at the event server.
@@ -261,7 +263,6 @@ underscore. Alternatively, we could use a single underscore in place of a
 variable name to ignore it completely.
 
 ```elixir
-  # Wait until all events have fired or the timeout has passed
   def listen(delay) do
     receive do
     match: m = { :done, _name, _description }
@@ -309,7 +310,7 @@ playing with it in the shell and see what happens.
 ## Epilogue ##
 
 Congratulations! You have now a pretty solid understanding of what it takes to
-write a client-server app using Elixir.
+write a client-server application using Elixir.
 
 
   [1]: http://elixir-lang.org/getting_started/1.html
@@ -323,3 +324,4 @@ write a client-server app using Elixir.
   [9]: http://www.erlang.org/course/concurrent_programming.html
   [10]: http://www.erlang.org/doc/getting_started/users_guide.html
   [11]: https://github.com/elixir-lang/elixir/blob/master/lib/enum.ex
+  [12]: https://github.com/elixir-lang/elixir/blob/master/lib/process.ex
