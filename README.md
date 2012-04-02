@@ -212,6 +212,102 @@ going to take a closer look at the event server.
 
 ## The EventServer Module ##
 
+```elixir
+defmodule EventServer do
+  # We need to keep a list of all pending events and subscribed clients
+  defrecord EventServer.State, events: [], clients: []
+  refer EventServer.State
+
+  # Event description
+  defrecord EventServer.Event, name: "", description: "", pid: nil, timeout: 0
+  refer EventServer.Event
+```
+
+```elixir
+  ## Public API ##
+
+  def start do
+    Process.register __MODULE__, pid = :erlang.spawn __MODULE__, :init, []
+    pid
+  end
+
+  def start_link do
+    Process.register __MODULE__, pid = :erlang.spawn_link __MODULE__, :init, []
+    pid
+  end
+
+  def init do
+    main_loop State.new
+  end
+```
+
+```elixir
+  # Create a new event with a unique name
+  def add_event(name, description, timeout) do
+    ref = make_ref
+    __MODULE__ <- { Process.self, ref, {:add, name, description, timeout} }
+    receive do
+    match: { ^ref, msg }
+      msg
+    after: 5000
+      { :error, :timeout }
+    end
+  end
+```
+
+```elixir
+  # Subscribe to event notifications
+  def subscribe(pid) do
+    # Here we can use `whereis` to find out the pid because we have
+    # registered our module in the `start` (and `start_link`) function
+    mon = Process.monitor :erlang.whereis __MODULE__
+    __MODULE__ <- { Process.self, mon, {:subscribe, pid} }
+    receive do
+    match: { ^mon, :ok }
+      { :ok, mon }
+    match: { 'DOWN', ^mon, :process, ^pid, reason }
+      { :error, reason }
+    after: 5000
+      { :error, :timeout }
+    end
+  end
+```
+
+```elixir
+  # Cancel the event with name 'name'
+  def cancel(name) do
+    ref = :erlang.make_ref
+    __MODULE__ <- { Process.self, ref, {:cancel, name} }
+    receive do
+    match: { ^ref, :ok }
+      :ok
+    after: 5000
+      { :error, :timeout }
+    end
+  end
+```
+
+```elixir
+  # Wait until all events have fired or the timeout has passed
+  def listen(delay) do
+    receive do
+    match: m = { :done, _name, _description }
+      [m | listen(0)]
+    after: delay * 1000
+      []
+    end
+  end
+```
+
+```elixir
+  # Send 'msg' to each subscribed client
+  def send_to_clients(msg, clients) do
+    Enum.map clients, fn({_ref, pid}) ->
+      pid <- msg
+    end
+  end
+```
+
   [1]: http://elixir-lang.org/getting_started/1.html
   [2]: http://elixir-lang.org/
   [3]: http://learnyousomeerlang.com/designing-a-concurrent-application
