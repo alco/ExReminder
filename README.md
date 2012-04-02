@@ -41,6 +41,9 @@ concepts is required. Here's a few links to online resources that cover Erlang's
 * Erlang's official website has a short [tutorial][9] with pictures that
   briefly describe Erlang's primitives for concurrent programming.
 
+* A bigger and more comprehensive [guide][10] from Erlang's official
+  documentation site.
+
 * I have mentioned that the code for this tutorial is based on a chapter from
   the great [Learn You Some Erlang for Great Good!][5] book. It is an excellent
   introduction to Erlang, its design principles, standard library, best
@@ -73,11 +76,9 @@ through the code.
 ## The Event Module ##
 
 We'll start with the `Event` module. When a client asks the server to create an
-event, the server spawns a new process from the `Event` module and then it
-waits the specified amount of time before it calls back to the server which
-then forwards the event's metadata back to the client.
-
-Let's first get a bird's-eye view at the code structure we're going to build.
+event, the server spawns a new Event process and then the event process waits
+for the specified amount of time before it calls back to the server which then
+forwards the event's name back to the client.
 
 ```elixir
 defmodule Event do
@@ -85,16 +86,82 @@ defmodule Event do
 
   ## Public API ##
 
-  def start(event_name, delay)
-  def start_link(event_name, delay)
-  def init(server, event_name, delay)
+  def start(event_name, delay) do
+    :erlang.spawn __MODULE__, :init, [Process.self, event_name, delay]
+  end
 
-  def cancel(pid)
+  def start_link(event_name, delay) do
+    :erlang.spawn_link __MODULE__, :init, [Process.self, event_name, delay]
+  end
 
+  def init(server, event_name, delay) do
+    main_loop State.new server: server, name: event_name, to_go: delay
+  end
+```
 
-  ## Private functions ##
+First, we define a record named `Event.State`. In it we will store all the
+state required for the event to run and contact the server when its time has
+run out. Note that we intentionally give the record a compound name to reflect
+its relation to the `Event` module. Records in Elixir leave in a global
+namespace.  So, if we named this record simply `State` and then created another
+record for the server module with the same name, we would get a name clash.
 
-  defp main_loop(state)
+The first three functions are responsible for spawning a new `Event` process
+and initializing the state with the data provided from outside. Here we call
+Erlang's `spawn` and `spawn_link` functions directly. Elixir may provide
+wrappers for those at some point in the future.
+
+In the `init` function we create a new State record passing initial values as
+an orddict. If you prefer more formal syntax, you could rewrite the line in on
+of the following ways:
+
+```elixir
+main_loop State.new [server: server, name: event_name, to_go: delay]
+# or
+main_loop State.new [{:server, server}, {:name, event_name}, {:to_go, delay}]
+# or even
+main_loop(State.new [{:server, server}, {:name, event_name}, {:to_go, delay}])
+```
+
+However, when it doesn't introduce ambiguity, it is recommended to use the first approach.
+
+---
+
+```elixir
+  def cancel(pid) do
+    # Create a monitor to know when the process dies
+    mon = Process.monitor pid
+    pid <- { Process.self, mon, :cancel }
+    receive do
+    match: { ^mon, :ok }
+      Process.demonitor mon, [:flush]
+      :ok
+    match: { DOWN, ^mon, :process, ^pid, _reason }
+      # The server is down. We're ok with that.
+      :ok
+    end
+  end
+```
+
+Next, we have a function for cancelling the event. This is done by sending a
+`:cancel` message to the event process which is then received in the main loop.
+If we look closely at the `main_loop` function, we'll that all it does is
+hanging waiting for the `:cancel` message to arrive. Once it receives the
+message, it simply returns `:ok` and exists the loop, thus terminating the
+process.
+
+We use a left-arrow operator `<-` to send a message (Erlang uses `!` for the
+same purpose). Also note the use of the caret `^` symbol. When you do pattern
+matching in Elixir and you want to match against the value of a variable
+(rather than bind the variable to a new value), prepend the variable's name
+with a caret.
+
+---
+
+The last function in our Event module is the main loop of the process.
+
+```elixir
+  defp main_loop(state) do
     server = state.server
     receive do
     match: {^server, ref, :cancel}
@@ -107,55 +174,30 @@ defmodule Event do
       server <- { :done, state.name }
     end
   end
-end
 ```
 
-This is basically the entire code for the module with a few details omitted.
-
-First, we define a record named `Event.State`. In it, we will store all the
-state required for the event to run and contact the server when its time has
-run out. Note we intentionally give the record a compound name to reflect its
-relation to the `Event` module. Records in Elixir leave in a global namespace.
-So, if we named this record simply `State` and then created another record for
-the server module with the same name, we would get a name clash.
-
-The first three functions are responsible for spawning a new `Event` process
-and initializing the state with the data provided from outside. The difference
-between `start` and `start_link` functions is that the former one will spawn an
-independent process whereas the latter one will spawn a linked process, that
-is, a process that will die if the server process dies. Because we'll have a
-single server process, there is no need for all event processes stay around if
-the server goes down. Creating each event process with the `start_link`
-function allows us to achieve exactly that.
-
-Next, we have a function for cancelling the event. This is done by sending a
-`:cancel` message to the event process which is then received in the main loop.
-If we look closely at the `main_loop` function, we'll that all it does is
-hanging waiting for the `:cancel` message to arrive. Once it receives the
-message, it simply returns `:ok` and exists the loop, thus terminating the
-process.
-
-However, if the timeout runs before `:cancel` is received, the event process
-will send a reminder to the server, passing `:done` token along with its name.
-It will then exit the main loop, as before, terminating the event process.
+It is not actually a loop, strictly speaking, but you get the point. Every
+Event process spends most of its lifetime in this function. Other than the fact
+that we use `defp` instead of `def` to keep this function private to the Event
+module, there is nothing new in this particular piece of code.
 
 ## Testing The Event Module ##
 
-Notice how our `Event` module doesn't depend on the server module. All it does
-is provide an interface for spawning new event processes and cancelling them.
-It makes it easy to test the Event module separately to make sure eveything
-works as expected.
+Notice how our `Event` module doesn't depend on the server module or any other
+module for that matter. All it does is provide an interface for spawning new
+event processes and cancelling them. This approach makes it easy to test the
+Event module separately and make sure eveything works as expected.
 
-Open the `test_event.exs` file and paste its contents to a running `iex`
+Open the `test_event.exs` file and paste its contents into a running `iex`
 instance. Make sure everything works as expected: the `iex` process
 successfully receives a `{ :done, "Event" }` message from the first spawned
-event process. Then we create another event will a bigger timeout value and
-cancel it before the timeout has run out. Play around with it a little,
-spawning multiple events and using the provided `flush` function to check that
-you receive reminders from the events for which timeout has run out.
+event process. Then we create another event with a bigger timeout value and
+cancel it before the timeout runs out. Play around with it a little, spawning
+multiple events and using the provided `flush` function to check that you
+receive reminders from the spawned events.
 
-Once you're satisfied with the result, move on to the next section where we'll
-implement the server.
+Once you're satisfied with the result, move on to the next section where we're
+going to take a closer look at the event server.
 
 ## The EventServer Module ##
 
@@ -168,3 +210,4 @@ implement the server.
   [7]: http://learnyousomeerlang.com/the-hitchhikers-guide-to-concurrency
   [8]: http://groups.google.com/group/elixir-lang-core
   [9]: http://www.erlang.org/course/concurrent_programming.html
+  [10]: http://www.erlang.org/doc/getting_started/users_guide.html
