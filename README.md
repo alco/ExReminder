@@ -38,6 +38,9 @@ concepts is required. Here's a few links to online resources that cover Erlang's
   some exposure to the Erlang's syntax but also review some of the things you
   have learned in the [Getting Started][1] guide.
 
+* Erlang's official website has a short [tutorial][9] with pictures that
+  briefly describe Erlang's primitives for concurrent programming.
+
 * I have mentioned that the code for this tutorial is based on a chapter from
   the great [Learn You Some Erlang for Great Good!][5] book. It is an excellent
   introduction to Erlang, its design principles, standard library, best
@@ -164,3 +167,4 @@ implement the server.
   [6]: https://github.com/alco/elixir/wiki/Erlang-Syntax:-A-Crash-Course
   [7]: http://learnyousomeerlang.com/the-hitchhikers-guide-to-concurrency
   [8]: http://groups.google.com/group/elixir-lang-core
+  [9]: http://www.erlang.org/course/concurrent_programming.html
