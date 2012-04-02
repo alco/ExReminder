@@ -34,8 +34,10 @@ defmodule Event do
     # Create a monitor to know when the process dies
     mon = Process.monitor pid
     pid <- { Process.self, mon, :cancel }
+    # Note the use of the caret ^ to match against variable value
     receive do
     match: { ^mon, :ok }
+      # The event has been cancelled successfully
       Process.demonitor mon, [:flush]
       :ok
     match: { DOWN, ^mon, :process, ^pid, _reason }
