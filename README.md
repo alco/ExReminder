@@ -329,6 +329,12 @@ like:
     end
 ```
 
+The basic pattern is as follows: enter the `receive` block waiting for a
+message. Once a message has arrived, perform appropriate actions and make a
+recursive call with the updated state into the same message loop. To see
+exactly what actions are being performed and why, read carefully through the
+explanation in the book and take a look at the code in the **event_server.ex**
+file.
 
 ---
 
@@ -358,6 +364,36 @@ shell.
 The next step you might take is walk through the code yourself, it is
 abundantly commented. Every time you stumble upon an unfamiliar concept, try
 playing with it in the shell and see what happens.
+
+One more thing I'd like to mention is how we can test hot code swapping in a
+running application. Compile the source code as before and start up `iex` in
+the project's root directory. Copy the contents of the **test_server.exs** file
+into the shell once again so that we have a server instance running.
+
+Now open another terminal tab or window and navigate to project's root. Make
+some change in the code, for instance, change the message the server sends in
+response to an `:add` request. This is line 122 in the **event_server.ex** file.
+Here's what mine looks like after the change:
+
+```elixir
+pid <- { msg_ref, :sir_yes_sir }
+```
+
+Then you need to recompile the source by invoking
+
+    make
+
+Now go back to the Terminal tab you have `iex` running in and evaluate the following expression:
+
+```elixir
+EventServer <- :code_change
+
+# Make sure the code has been reloaded
+EventServer.add_event "New event", "No description", 100
+#=> :sir_yes_sir
+```
+
+That's it! You have just successfully updated the code of a running server.
 
 ## Where to go Next ##
 
