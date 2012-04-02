@@ -103,7 +103,7 @@ defmodule EventServer do
       # the State record. It receives a one-argument function passing it the
       # current value of the `clients` field and sets the value of the
       # field to the return value of the function.
-      new_state = state.update_clients fn(clients) -> Orddict.put(clients, mon, client) end
+      new_state = state.update_clients fn(clients) -> :orddict.store(mon, client, clients) end
       pid <- { msg_ref, :ok }
       main_loop new_state
 
@@ -113,10 +113,10 @@ defmodule EventServer do
         # Event module and not our referred EventServer.Event record
         event_pid = __MAIN__.Event.start_link name, timeout
         new_state = state.update_events fn(events) ->
-                      Orddict.put(
-                        events,
+                      :orddict.store(
                         name,
                         Event.new(name: name, description: description, pid: event_pid, timeout: timeout)
+                        events
                       )
                     end
         pid <- { msg_ref, :ok }
@@ -127,14 +127,15 @@ defmodule EventServer do
       end
 
     match: { pid, msg_ref, {:cancel, name} }
-      # If an event with the specified name is not found,
-      # we simply do nothing
-      events = case Orddict.get(state.events, name) do
-               match: nil
+      # If an event with the specified name is not found, we simply do nothing.
+      # If it is found, we send it a :cancel message and remove from our list
+      # of events.
+      events = case :orddict.find(name, state.events) do
+               match: :error
                  state.events
-               match: event
+               match: { :ok, event }
                  __MAIN__.Event.cancel event.pid
-                 Orddict.delete state.events, name
+                 :orddict.erase name, state.events
                end
       pid <- { msg_ref, :ok }
       # This call will update the values of the `events` field
@@ -143,13 +144,13 @@ defmodule EventServer do
 
     match: { :done, name }
       # The event has finished, notify all clients
-      case Orddict.get(state.events, name) do
-      match: nil
+      case :orddict.find(name, state.events) do
+      match: :error
         # This happens if we cancel an event and it fires at the same time
         main_loop state
-      match: event
+      match: { :ok, event }
         send_to_clients { :done, event.name, event.description }, state.clients
-        main_loop state.update_events fn(events) -> Orddict.delete(events, name) end
+        main_loop state.update_events fn(events) -> :orddict.erase(name, events) end
       end
 
     match: :shutdown
@@ -159,7 +160,7 @@ defmodule EventServer do
 
     match: { 'DOWN', ref, :process, _pid, _reason }
       # A client has crashed. Remove it from our subscribers list.
-      main_loop state.update_clients fn(clients) -> Orddict.delete(clients, ref) end
+      main_loop state.update_clients fn(clients) -> :orddict.erase(ref, clients) end
 
     match: :code_change
       # New code has arrived! Time to upgrade.
