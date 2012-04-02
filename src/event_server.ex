@@ -76,7 +76,7 @@ defmodule EventServer do
     __MODULE__ <- :shutdown
   end
 
-  # Wait until all events have fired or the timeout has passed
+  # Wait until at least one event has fired or the timeout has passed
   def listen(delay) do
     receive do
     match: m = { :done, _name, _description }
