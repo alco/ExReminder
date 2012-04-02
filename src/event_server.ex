@@ -137,7 +137,9 @@ defmodule EventServer do
                  Orddict.delete state.events, name
                end
       pid <- { msg_ref, :ok }
-      main_loop state.events events
+      # This call will update the values of the `events` field
+      new_state = state.events events
+      main_loop new_state
 
     match: { :done, name }
       # The event has finished, notify all clients
@@ -156,7 +158,7 @@ defmodule EventServer do
       exit :shutdown
 
     match: { 'DOWN', ref, :process, _pid, _reason }
-      # A client has crashed
+      # A client has crashed. Remove it from our subscribers list.
       main_loop state.update_clients fn(clients) -> Orddict.delete(clients, ref) end
 
     match: :code_change
@@ -172,7 +174,6 @@ defmodule EventServer do
       main_loop state
     end
   end
-
 
   # Send 'msg' to each subscribed client
   defp send_to_clients(msg, clients) do

@@ -254,7 +254,8 @@ of the `EventServer.State` record:
   end
 ```
 
-The next couple of functions in `EventServer` don't introduce new concepts, so
+The next couple of functions in `EventServer` don't introduce new concepts,
+they simply wrap the messaging protocol used by the server in a simple API, so
 we'll skip them. One thing I'd like to point out though, in the `listen`
 function below, is that we can prepend argument and variable names with
 underscore `_`. Because some of the variables are not used inside the match
@@ -276,7 +277,58 @@ variable name to ignore it completely.
 ---
 
 Now, let's take a look at the server's main loop which is pretty large,
-although its basic structure is rather simple.
+although its basic structure is rather simple. Here's what its skeleton looks
+like:
+
+```elixir
+  defp main_loop(state) do
+    receive do
+    match: { pid, msg_ref, {:subscribe, client} }
+      # Subscribe a client identified by the `pid`
+      # ...
+      pid <- { msg_ref, :ok }
+      main_loop new_state
+
+    match: { pid, msg_ref, {:add, name, description, timeout} }
+      # Spawn a new event process to handle the :add request from client
+      # ...
+      pid <- { msg_ref, :ok }
+      main_loop new_state
+
+    match: { pid, msg_ref, {:cancel, name} }
+      # Tear down the event process corresponding to `name`
+      # ...
+      pid <- { msg_ref, :ok }
+      main_loop new_state
+
+    match: { :done, name }
+      # The event has finished, notify all clients
+      # ...
+      main_loop new_state
+
+    match: :shutdown
+      # Shut down the server and all living event processes
+      exit :shutdown
+
+    match: { 'DOWN', ref, :process, _pid, _reason }
+      # A client has crashed. Remove it from our subscribers list.
+      # ...
+      main_loop new_state
+
+    match: :code_change
+      # New code has arrived! Time to upgrade.
+      # The upgrade process is performed by using the qualified name
+      # __MODULE__.main_loop. Calling 'main_loop' instead would continue
+      # running the old code.
+      __MODULE__.main_loop state
+
+    match: else
+      # Someone sent us a message we don't understand
+      IO.puts "Unknown message: #{inspect else}"
+      main_loop state
+    end
+```
+
 
 ---
 
