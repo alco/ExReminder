@@ -5,12 +5,10 @@
 #
 defmodule EventServer do
   # We need to keep a list of all pending events and subscribed clients
-  defrecord EventServer.State, events: [], clients: []
-  refer EventServer.State
+  defrecord State, events: [], clients: []
 
   # Event description
-  defrecord EventServer.Event, name: "", description: "", pid: nil, timeout: 0
-  refer EventServer.Event
+  defrecord Event, name: "", description: "", pid: nil, timeout: 0
 
 
   ## Public API ##

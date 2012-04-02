@@ -9,11 +9,7 @@
 # server to exercise its API.
 #
 defmodule Event do
-  defrecord Event.State, server: nil, name: "", to_go: 0
-
-  # This sets up an alias for the record so that we can simply use State to
-  # refer to it inside the module
-  refer Event.State
+  defrecord State, server: nil, name: "", to_go: 0
 
 
   ## Public API ##
