@@ -297,7 +297,19 @@ collections such as `map`, `filter`, `all?`, `split`, etc. Take a look at its
 
 ## Testing The Server ##
 
-...
+As with the `Event` module, I've written a small test-script to check that the
+server works properly. It is located in the `test_server.exs` file. As before,
+start up `iex` in the project's directory and copy the file contents into the
+shell.
+
+The next step you might take is walk through the code yourself, it is
+abundantly commented. Every time you stumble upon an unfamiliar concept, try
+playing with it in the shell and see what happens.
+
+## Epilogue ##
+
+Congratulations! You have now a pretty solid understanding of what it takes to
+write a client-server app using Elixir.
 
 
   [1]: http://elixir-lang.org/getting_started/1.html
