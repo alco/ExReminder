@@ -168,7 +168,7 @@ defmodule EventServer do
 
 
   # Send 'msg' to each subscribed client
-  def send_to_clients(msg, clients) do
+  defp send_to_clients(msg, clients) do
     Enum.map clients, fn({_ref, pid}) ->
       pid <- msg
     end
