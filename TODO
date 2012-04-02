@@ -1,3 +1,4 @@
 * Implement more elegant time handling routines
 * Update explanation of module visibility with regards to the recent introduction of nested modules.
 * Implement a supervisor
+* Demonstrate hot code swapping
