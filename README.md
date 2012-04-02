@@ -372,8 +372,8 @@ Also send a note to the [mailing list][8] so that I know which task you're
 working on.
 
 Next, I'm going to bring this [WebSockets demo][13] up to date and later, if
-all goes well, I will try to port the server for Mozilla's BrowserQuest
-adventure. If any of these projects sound interesting to you, come join me.
+all goes well, I will try to port the server for Mozilla's [BrowserQuest][14]
+game. If any of these projects sound interesting to you, come join me.
 Find my on IRC (I'm true_droid there) and send a message to the [list][8].
 
 
@@ -390,3 +390,4 @@ Find my on IRC (I'm true_droid there) and send a message to the [list][8].
   [11]: https://github.com/elixir-lang/elixir/blob/master/lib/enum.ex
   [12]: https://github.com/elixir-lang/elixir/blob/master/lib/process.ex
   [13]: https://github.com/josevalim/elixir-websockets-demo/tree/final/
+  [14]: https://github.com/mozilla/BrowserQuest
