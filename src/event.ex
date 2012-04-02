@@ -53,7 +53,7 @@ defmodule Event do
     server = state.server
     receive do
     match: {^server, ref, :cancel}
-      # After sending :ok to the server, we leave this function basically
+      # After sending :ok to the server, we leave this function, basically
       # terminating the process. Thus, no reminder shall be sent.
       server <- { ref, :ok }
 
