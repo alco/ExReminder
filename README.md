@@ -247,8 +247,8 @@ In the `init` function, we're entering the main loop passing it a new instance
 of the `State` record:
 
 ```elixir
-  def init do
-    main_loop State.new
+  def init(state // State.new) do
+    main_loop state
   end
 ```
 
@@ -315,10 +315,13 @@ like:
 
     match: :code_change
       # New code has arrived! Time to upgrade.
+      #
       # The upgrade process is performed by using the qualified name
-      # __MODULE__.main_loop. Calling 'main_loop' instead would continue
-      # running the old code.
-      __MODULE__.main_loop state
+      # __MODULE__.init. Calling 'main_loop' instead would continue running the
+      # old code. We can't to a call __MODULE__.main_loop, because 'main_loop'
+      # is a private function. For this reason, we're doing a recursive call
+      # through the 'init' function.
+      __MODULE__.init state
 
     match: else
       # Someone sent us a message we don't understand
