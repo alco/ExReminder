@@ -243,8 +243,9 @@ defmodule EventServer do
   defrecord Event, name: "", description: "", pid: nil, timeout: 0
 ```
 
-In the `init` function, we're entering the main loop passing it a new instance
-of the `State` record:
+In the `init` function, we're entering the main loop passing it a `State`
+record. Here we're exploiting Elixir's support for default arguments in
+functions to create a new state when `init` is called without arguments.
 
 ```elixir
   def init(state // State.new) do
