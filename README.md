@@ -142,7 +142,7 @@ State.new([server: server, name: event_name, to_go: delay])
 ```
 
 Note, however, that you cannot pass a list of tuples, because `new` expects an
-orddict (which is an _ordered_ list of tuples).  When it doesn't introduce
+orddict (which is an _ordered_ list of tuples). When it doesn't introduce
 ambiguity, it is recommended to use the first approach.
 
 ---
@@ -166,9 +166,9 @@ Next, we have a function for cancelling an event.
 ```
 
 This is done by sending a `:cancel` message to the event process which is then
-received in the main loop.  If we look closely at the `main_loop` function
+received in the main loop. If we look closely at the `main_loop` function
 below, we'll see that all it does is hang waiting for the `:cancel` message to
-arrive.  Once it receives the message, it simply returns `:ok` and exists the
+arrive. Once it receives the message, it simply returns `:ok` and exists the
 loop, thus terminating the process.
 
 We use a left-arrow operator `<-` to send a message (Erlang uses `!` for the
@@ -420,18 +420,18 @@ Wasn't it fun?
 ## Where to go Next ##
 
 Congratulations! You now have quite a solid understanding of what it takes to
-write a client-server application using Elixir. Ready for a tougher challenge?
-Great! At the moment I'm still refining this tutorial. You may have noticed
-that some features like supervisor implementation and formatted date for event
-timeouts are described in the book, but are missing in this tutorial. This is
-temporary, please see the TODO file for a list of things to be added soon. If
-you'd like to help me out, feel free to fork the project and start hacking.
-Also send a note to the [mailing list][8] so that I know which task you're
-working on.
+write a full-blown client-server application using Elixir. Ready for a tougher
+challenge? Great! At the moment I'm still refining this tutorial. You may have
+noticed that some features like supervisor implementation and formatted date
+for event timeouts are described in the book, but are missing in this tutorial.
+This is temporary, please see the TODO file for a list of things to be added
+soon. If you'd like to help me out, feel free to fork the project and start
+hacking. Also send a note to the [mailing list][8] so that I know which task
+you're working on.
 
 Next, I'm going to bring this [WebSockets demo][13] up to date and later, if
 all goes well, I will try to port the server for Mozilla's [BrowserQuest][14]
-game. If any of these projects sound interesting to you, come join me!  Find me
+game. If any of these projects sound interesting to you, come join me! Find me
 on IRC (I'm `true_droid` on the **#elixir-lang** channel) or send a message to
 the [list][8].
 
