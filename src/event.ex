@@ -36,7 +36,7 @@ defmodule Event do
       # The event has been cancelled successfully
       Process.demonitor mon, [:flush]
       :ok
-    match: { DOWN, ^mon, :process, ^pid, _reason }
+    match: { :DOWN, ^mon, :process, ^pid, _reason }
       # The server is down. We're ok with that.
       :ok
     end

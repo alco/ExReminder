@@ -50,7 +50,7 @@ defmodule EventServer do
     receive do
     match: { ^mon, :ok }
       { :ok, mon }
-    match: { 'DOWN', ^mon, :process, ^pid, reason }
+    match: { :DOWN, ^mon, :process, ^pid, reason }
       { :error, reason }
     after: 5000
       { :error, :timeout }
@@ -156,7 +156,7 @@ defmodule EventServer do
       # processes will also be terminated.
       exit :shutdown
 
-    match: { 'DOWN', ref, :process, _pid, _reason }
+    match: { :DOWN, ref, :process, _pid, _reason }
       # A client has crashed. Remove it from our subscribers list.
       main_loop state.update_clients fn(clients) -> :orddict.erase(ref, clients) end
 

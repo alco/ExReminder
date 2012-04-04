@@ -158,7 +158,7 @@ Next, we have a function for cancelling an event.
     match: { ^mon, :ok }
       Process.demonitor mon, [:flush]
       :ok
-    match: { DOWN, ^mon, :process, ^pid, _reason }
+    match: { :DOWN, ^mon, :process, ^pid, _reason }
       # The server is down. We're ok with that.
       :ok
     end
@@ -309,7 +309,7 @@ like:
       # Shut down the server and all living event processes
       exit :shutdown
 
-    match: { 'DOWN', ref, :process, _pid, _reason }
+    match: { :DOWN, ref, :process, _pid, _reason }
       # A client has crashed. Remove it from our subscribers list.
       # ...
       main_loop new_state
