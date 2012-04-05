@@ -429,11 +429,11 @@ soon. If you'd like to help me out, feel free to fork the project and start
 hacking. Also send a note to the [mailing list][8] so that I know which task
 you're working on.
 
-Next, I'm going to bring this [WebSockets demo][13] up to date and later, if
-all goes well, I will try to port the server for Mozilla's [BrowserQuest][14]
-game. If any of these projects sound interesting to you, come join me! Find me
-on IRC (I'm `true_droid` on the **#elixir-lang** channel) or send a message to
-the [list][8].
+I'm also working on this [WebSockets demo][13]. Later, if all goes well, I will
+try to port the server for Mozilla's [BrowserQuest][14] game. If any of these
+projects sound interesting to you, come join me! Find me on IRC (I'm
+`true_droid` on the **#elixir-lang** channel) or send a message to the
+[list][8].
 
 Good luck!
 
@@ -450,5 +450,5 @@ Good luck!
   [10]: http://www.erlang.org/doc/getting_started/users_guide.html
   [11]: https://github.com/elixir-lang/elixir/blob/master/lib/enum.ex
   [12]: https://github.com/elixir-lang/elixir/blob/master/lib/process.ex
-  [13]: https://github.com/josevalim/elixir-websockets-demo/tree/final/
+  [13]: https://github.com/alco/ws-elixir
   [14]: https://github.com/mozilla/BrowserQuest
