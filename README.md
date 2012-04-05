@@ -61,7 +61,7 @@ concepts is required. Here's a few links to online resources that cover Erlang's
   see in ExReminder's source code.
 
 If you're looking at all this and start feeling discouraged, please don't!
-After all, you can the theory and dive straight into the code. You are free to
+After all, you can skip the theory and dive straight into the code. You are free to
 take any approach you wish as long as you're enjoying the process. Remember
 that in case of any difficulties, you can always visit the **#elixir-lang**
 channel on **irc.freenode.net** or send a message to the [mailing list][8]. I
