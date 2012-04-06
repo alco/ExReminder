@@ -25,7 +25,17 @@ defmodule EventServer do
     pid
   end
 
-  def init(state // State.new) do
+  def init(state // nil) do
+    # Here, instead of creating a new state, we could load events from a file
+    # if we saved them previously. Events can be stored into a file each time
+    # an event is added, cancelled, or finished; in other words, each time the
+    # `events` list of our State record is updated.
+    state =
+      if state === nil do
+        State.new
+      else:
+        state
+      end
     main_loop state
   end
 
