@@ -379,6 +379,10 @@ The next step you might take is walk through the code yourself, it is
 abundantly commented. Every time you stumble upon an unfamiliar concept, try
 playing with it in the shell and see what happens.
 
+There is also a rudimentary supervisor implemented in the **event_sup.ex** file
+that can launch the server as its child process and restart it in case of a
+crash.
+
 ## Hot Code Swapping ##
 
 One more thing I'd like to mention is how we can test hot code swapping in a
