@@ -430,22 +430,17 @@ Wasn't it fun?
 ## Where to go Next ##
 
 Congratulations! You now have quite a solid understanding of what it takes to
-write a full-blown client-server application using Elixir. Ready for a tougher
-challenge? Great! At the moment I'm still refining this tutorial. You may have
-noticed that some features like supervisor implementation and formatted date
-for event timeouts are described in the book, but are missing in this tutorial.
-This is temporary, please see the TODO file for a list of things to be added
-soon. If you'd like to help me out, feel free to fork the project and start
-hacking. Also send a note to the [mailing list][8] so that I know which task
-you're working on.
+write a full-blown client-server application using Elixir. Now you're ready to
+start working on your own project or join efforts with the community and help
+out a project in need.
 
-I'm also working on this [WebSockets demo][13]. Later, if all goes well, I will
-try to port the server for Mozilla's [BrowserQuest][14] game. If any of these
-projects sound interesting to you, come join me! Find me on IRC (I'm
-`true_droid` on the **#elixir-lang** channel) or send a message to the
-[list][8].
+I'm also working on this [WebSockets demo][13] which you might be interested in
+checking out. Later, if all goes well, I will try to port the server for
+Mozilla's [BrowserQuest][14] game. If any of these projects sound interesting
+to you, come join me! Find me on IRC (I'm `true_droid` on the **#elixir-lang**
+channel) or send a message to the [list][8].
 
-Good luck!
+Good luck and have fun!
 
 
   [1]: http://elixir-lang.org/getting_started/1.html
