@@ -99,7 +99,7 @@ defmodule Event do
   end
 
   def init(server, event_name, delay) do
-    main_loop State.new server: server, name: event_name, to_go: delay
+    main_loop State.new server: server, name: event_name, to_go: datetime_to_seconds(delay)
   end
 ```
 
@@ -144,6 +144,12 @@ State.new([server: server, name: event_name, to_go: delay])
 Note, however, that you cannot pass a list of tuples, because `new` expects an
 orddict (which is an _ordered_ list of tuples). When it doesn't introduce
 ambiguity, it is recommended to use the first approach.
+
+The last thing of note here is the fact that we call the `datetime_to_seconds`
+function passing it the given delay. This is done in order to accept the delay
+both in seconds as well as in Erlang's datetime format. You can find the
+definition of the `datetime_to_seconds` function at the end of the `Event`
+module.
 
 ---
 

@@ -106,23 +106,18 @@ defmodule EventServer do
       main_loop new_state
 
     match: { pid, msg_ref, {:add, name, description, timeout} }
-      if timeout > 0 do
-        # Use the fully qualified name __MAIN__.Event to refer to the
-        # Event module and not our referred EventServer.Event record
-        event_pid = __MAIN__.Event.start_link name, timeout
-        new_state = state.update_events fn(events) ->
-                      :orddict.store(
-                        name,
-                        Event.new(name: name, description: description, pid: event_pid, timeout: timeout),
-                        events
-                      )
-                    end
-        pid <- { msg_ref, :ok }
-        main_loop new_state
-      else:
-        pid <- { msg_ref, {:error, :bad_timeout} }
-        main_loop state
-      end
+      # Use the fully qualified name __MAIN__.Event to refer to the
+      # Event module and not our referred EventServer.Event record
+      event_pid = __MAIN__.Event.start_link name, timeout
+      new_state = state.update_events fn(events) ->
+                    :orddict.store(
+                      name,
+                      Event.new(name: name, description: description, pid: event_pid, timeout: timeout),
+                      events
+                    )
+                  end
+      pid <- { msg_ref, :ok }
+      main_loop new_state
 
     match: { pid, msg_ref, {:cancel, name} }
       # If an event with the specified name is not found, we simply do nothing.
