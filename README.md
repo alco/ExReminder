@@ -27,41 +27,16 @@ jump directly to _First Things First_. (Although you might still find the crash
 course on Erlang syntax useful, as it compares Erlang snippets with
 corresponding Elixir code.)
 
-## A Byte of Erlang ##
+## Erlang ##
 
-As Elixir's home page puts it,
+Be sure to look at the section called _A Byte of Erlang_ in this [chapter][15]
+of the Getting Started guide if you haven't got a chance to play with Erlang
+before. The present tutorial assumes you have familiarity with Erlang's basic
+concepts like processes, receive loops, message passing, etc. Knowledge of OTP
+is not required, though.
 
-> Elixir is a programming language built on top of the Erlang VM.
-
-So, in order to write a real application with Elixir, familiarity with Erlang's
-concepts is required. Here's a few links to online resources that cover Erlang's fundamentals:
-
-* This [Erlang Syntax: A Crash Course][6] (authored by yours truly) provides a
-  concise intro to Erlang's syntax. Each code snippet is accompanied by
-  equivalent code in Elixir. This is an opportunity for you to not only get
-  some exposure to the Erlang's syntax but also review some of the things you
-  have learned in the [Getting Started guide][1].
-
-* Erlang's official website has a short [tutorial][9] with pictures that
-  briefly describe Erlang's primitives for concurrent programming.
-
-* A larger and more comprehensive [guide][10] from Erlang's official
-  documentation site.
-
-* I have mentioned that the code for this tutorial is based on a chapter from
-  the great [Learn You Some Erlang for Great Good!][5] book. It is an excellent
-  introduction to Erlang, its design principles, standard library, best
-  practices and much more. If you are serious about Elixir, you'll want to get
-  a solid understanding of Erlang's fundamentals. Once you have read through
-  the crash course mentioned above, you'll be able to safely skip the first
-  couple of chapters in the book that mostly deal with Erlang syntax. When you
-  get to [The Hitchhiker's Guide to Concurrency][7] chapter, that's where the
-  real fun starts. It is also a good starting point for this tutorial since
-  this chapter and the ones that follow it explain many of the concepts we'll
-  see in ExReminder's source code.
-
-If you're looking at all this and start feeling discouraged, please don't!
-After all, you can skip the theory and dive straight into the code. You are free to
+If you're looking at this and start feeling discouraged, please don't! After
+all, you can skip the theory and dive straight into the code. You are free to
 take any approach you wish as long as you're enjoying the process. Remember
 that in case of any difficulties, you can always visit the **#elixir-lang**
 channel on **irc.freenode.net** or send a message to the [mailing list][8]. I
@@ -457,3 +432,4 @@ Good luck and have fun!
   [12]: https://github.com/elixir-lang/elixir/blob/master/lib/process.ex
   [13]: https://github.com/alco/ws-elixir
   [14]: https://github.com/mozilla/BrowserQuest
+  [15]: http://elixir-lang.org/getting_started/7.html
