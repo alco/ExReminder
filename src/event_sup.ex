@@ -20,11 +20,11 @@ defmodule EventSup do
   defp main_loop({m, f, a}) do
     pid = apply m, f, a
     receive do
-    match: {:EXIT, _from, :shutdown}
-      exit :shutdown  # will kill the child too
-    match: {:EXIT, ^pid, reason}
-      IO.puts "Process #{inspect pid} exited for reason #{inspect reason}"
-      main_loop {m, f, a}
+      {:EXIT, _from, :shutdown} ->
+        exit :shutdown  # will kill the child too
+      {:EXIT, ^pid, reason} ->
+        IO.puts "Process #{inspect pid} exited for reason #{inspect reason}"
+        main_loop {m, f, a}
     end
   end
 end

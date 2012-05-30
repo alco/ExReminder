@@ -33,7 +33,7 @@ defmodule EventServer do
     state =
       if state === nil do
         State.new
-      else:
+      else
         state
       end
     main_loop state
@@ -44,10 +44,10 @@ defmodule EventServer do
     ref = make_ref
     __MODULE__ <- { Process.self, ref, {:add, name, description, timeout} }
     receive do
-    match: { ^ref, msg }
-      msg
-    after: 5000
-      { :error, :timeout }
+      { ^ref, msg } ->
+        msg
+      after 5000 ->
+        { :error, :timeout }
     end
   end
 
@@ -58,12 +58,12 @@ defmodule EventServer do
     mon = Process.monitor Process.whereis __MODULE__
     __MODULE__ <- { Process.self, mon, {:subscribe, pid} }
     receive do
-    match: { ^mon, :ok }
-      { :ok, mon }
-    match: { :DOWN, ^mon, :process, ^pid, reason }
-      { :error, reason }
-    after: 5000
-      { :error, :timeout }
+      { ^mon, :ok } ->
+        { :ok, mon }
+      { :DOWN, ^mon, :process, ^pid, reason } ->
+        { :error, reason }
+      after 5000 ->
+        { :error, :timeout }
     end
   end
 
@@ -72,10 +72,10 @@ defmodule EventServer do
     ref = make_ref
     __MODULE__ <- { Process.self, ref, {:cancel, name} }
     receive do
-    match: { ^ref, :ok }
-      :ok
-    after: 5000
-      { :error, :timeout }
+      { ^ref, :ok } ->
+        :ok
+      after 5000 ->
+        { :error, :timeout }
     end
   end
 
@@ -87,12 +87,12 @@ defmodule EventServer do
   # Wait until at least one event has fired or the timeout has passed
   def listen(delay) do
     receive do
-    # We prepend underscores to variable names to silence the compiler (at
-    # tends to complain about unused variables)
-    match: m = { :done, _name, _description }
-      [m | listen(0)]
-    after: delay * 1000
-      []
+      # We prepend underscores to variable names to silence the compiler (at
+      # tends to complain about unused variables)
+      m = { :done, _name, _description } ->
+        [m | listen(0)]
+      after delay * 1000 ->
+        []
     end
   end
 
@@ -102,7 +102,7 @@ defmodule EventServer do
   # The main receive loop
   defp main_loop(state) do
     receive do
-    match: { pid, msg_ref, {:subscribe, client} }
+    { pid, msg_ref, {:subscribe, client} } ->
       # We'll keep a list of all subscribers and monitor them
       # so that we don't send useless messages to crashed clients
       mon = Process.monitor client
@@ -115,7 +115,7 @@ defmodule EventServer do
       pid <- { msg_ref, :ok }
       main_loop new_state
 
-    match: { pid, msg_ref, {:add, name, description, timeout} }
+    { pid, msg_ref, {:add, name, description, timeout} } ->
       # Use the fully qualified name __MAIN__.Event to refer to the
       # Event module and not our referred EventServer.Event record
       event_pid = __MAIN__.Event.start_link name, timeout
@@ -129,43 +129,43 @@ defmodule EventServer do
       pid <- { msg_ref, :ok }
       main_loop new_state
 
-    match: { pid, msg_ref, {:cancel, name} }
+    { pid, msg_ref, {:cancel, name} } ->
       # If an event with the specified name is not found, we simply do nothing.
       # If it is found, we send it a :cancel message and remove from our list
       # of events.
       events = case :orddict.find(name, state.events) do
-               match: :error
-                 state.events
-               match: { :ok, event }
-                 __MAIN__.Event.cancel event.pid
-                 :orddict.erase name, state.events
+                 :error ->
+                   state.events
+                 { :ok, event } ->
+                   __MAIN__.Event.cancel event.pid
+                   :orddict.erase name, state.events
                end
       pid <- { msg_ref, :ok }
       # This call will update the values of the `events` field
       new_state = state.events events
       main_loop new_state
 
-    match: { :done, name }
+    { :done, name } ->
       # The event has finished, notify all clients
       case :orddict.find(name, state.events) do
-      match: :error
-        # This happens if we cancel an event and it fires at the same time
-        main_loop state
-      match: { :ok, event }
-        send_to_clients { :done, event.name, event.description }, state.clients
-        main_loop state.update_events fn(events) -> :orddict.erase(name, events) end
+        :error ->
+          # This happens if we cancel an event and it fires at the same time
+          main_loop state
+        { :ok, event } ->
+          send_to_clients { :done, event.name, event.description }, state.clients
+          main_loop state.update_events fn(events) -> :orddict.erase(name, events) end
       end
 
-    match: :shutdown
+    :shutdown ->
       # Since we create each new event by calling `start_link`, all event
       # processes will also be terminated.
       exit :shutdown
 
-    match: { :DOWN, ref, :process, _pid, _reason }
+    { :DOWN, ref, :process, _pid, _reason } ->
       # A client has crashed. Remove it from our subscribers list.
       main_loop state.update_clients fn(clients) -> :orddict.erase(ref, clients) end
 
-    match: :code_change
+    :code_change ->
       # New code has arrived! Time to upgrade.
       #
       # The upgrade process is performed by using the qualified name
@@ -175,9 +175,9 @@ defmodule EventServer do
       # through the 'init' function.
       __MODULE__.init state
 
-    match: else
+    other ->
       # Someone sent us a message we don't understand
-      IO.puts "Unknown message: #{inspect else}"
+      IO.puts "Unknown message: #{inspect other}"
       main_loop state
     end
   end

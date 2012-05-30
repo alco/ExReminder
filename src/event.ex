@@ -32,13 +32,13 @@ defmodule Event do
     pid <- { Process.self, mon, :cancel }
     # Note the use of the caret ^ to match against variable value
     receive do
-    match: { ^mon, :ok }
-      # The event has been cancelled successfully
-      Process.demonitor mon, [:flush]
-      :ok
-    match: { :DOWN, ^mon, :process, ^pid, _reason }
-      # The event process is already down. We're ok with that.
-      :ok
+      { ^mon, :ok } ->
+        # The event has been cancelled successfully
+        Process.demonitor mon, [:flush]
+        :ok
+      { :DOWN, ^mon, :process, ^pid, _reason } ->
+        # The event process is already down. We're ok with that.
+        :ok
     end
   end
 
@@ -50,14 +50,14 @@ defmodule Event do
   defp main_loop(state) do
     server = state.server
     receive do
-    match: {^server, ref, :cancel}
-      # After sending :ok to the server, we leave this function, basically
-      # terminating the process. Thus, no reminder shall be sent.
-      server <- { ref, :ok }
+      {^server, ref, :cancel} ->
+        # After sending :ok to the server, we leave this function, basically
+        # terminating the process. Thus, no reminder shall be sent.
+        server <- { ref, :ok }
 
-    after: state.to_go * 1000
-      # The timeout has passed, now is the time to remind the server.
-      server <- { :done, state.name }
+      after state.to_go * 1000 ->
+        # The timeout has passed, now is the time to remind the server.
+        server <- { :done, state.name }
     end
   end
 
