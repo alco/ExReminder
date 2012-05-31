@@ -407,13 +407,8 @@ Wasn't it fun?
 Congratulations! You now have quite a solid understanding of what it takes to
 write a full-blown client-server application using Elixir. Now you're ready to
 start working on your own project or join efforts with the community and help
-out a project in need.
-
-I'm also working on this [WebSockets demo][13] which you might be interested in
-checking out. Later, if all goes well, I will try to port the server for
-Mozilla's [BrowserQuest][14] game. If any of these projects sound interesting
-to you, come join me! Find me on IRC (I'm `true_droid` on the **#elixir-lang**
-channel) or send a message to the [list][8].
+out a project in need. Visit the **#elixir-lang** channel on
+**irc.freenode.net** and join the [mailing list][8] to keep in touch.
 
 Good luck and have fun!
 
@@ -421,7 +416,7 @@ Good luck and have fun!
   [1]: http://elixir-lang.org/getting_started/1.html
   [2]: http://elixir-lang.org/
   [3]: http://learnyousomeerlang.com/designing-a-concurrent-application
-  [4]: https://gist.github.com/2221616
+  [4]: https://gist.github.com/2783092
   [5]: http://learnyousomeerlang.com/
   [6]: https://github.com/alco/elixir/wiki/Erlang-Syntax:-A-Crash-Course
   [7]: http://learnyousomeerlang.com/the-hitchhikers-guide-to-concurrency
@@ -430,6 +425,4 @@ Good luck and have fun!
   [10]: http://www.erlang.org/doc/getting_started/users_guide.html
   [11]: https://github.com/elixir-lang/elixir/blob/master/lib/enum.ex
   [12]: https://github.com/elixir-lang/elixir/blob/master/lib/process.ex
-  [13]: https://github.com/alco/ws-elixir
-  [14]: https://github.com/mozilla/BrowserQuest
   [15]: http://elixir-lang.org/getting_started/7.html
