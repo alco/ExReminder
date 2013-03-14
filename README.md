@@ -27,6 +27,18 @@ jump directly to _First Things First_. (Although you might still find the crash
 course on Erlang syntax useful, as it compares Erlang snippets with
 corresponding Elixir code.)
 
+## Running examples ##
+
+A couple of examples are provided to demonstrate the usage of the API we're
+going to build. The best way to run them is to start `iex` and paste the code
+into it. If you try to run them like so
+
+```
+elixir test_event.exs
+```
+
+you might get unexpected results.
+
 ## Erlang ##
 
 Be sure to look at the section called _A Byte of Erlang_ in this [chapter][15]
