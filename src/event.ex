@@ -8,18 +8,18 @@
 # Therefore, we can easily test it from the shell or by implementing a minimal
 # server to exercise its API.
 #
-defmodule Event do
+defmodule EventModule do
   defrecord State, server: nil, name: "", to_go: 0
 
 
   ## Public API ##
 
   def start(event_name, delay) do
-    spawn __MODULE__, :init, [Process.self, event_name, delay]
+    spawn __MODULE__, :init, [self, event_name, delay]
   end
 
   def start_link(event_name, delay) do
-    spawn_link __MODULE__, :init, [Process.self, event_name, delay]
+    spawn_link __MODULE__, :init, [self, event_name, delay]
   end
 
   def init(server, event_name, delay) do
@@ -29,7 +29,7 @@ defmodule Event do
   def cancel(pid) do
     # Create a monitor to know when the process dies
     mon = Process.monitor pid
-    pid <- { Process.self, mon, :cancel }
+    pid <- { self, mon, :cancel }
     # Note the use of the caret ^ to match against variable value
     receive do
       { ^mon, :ok } ->

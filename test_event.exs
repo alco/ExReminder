@@ -8,24 +8,25 @@
 # A helper function
 # Flushes all currently available messages to standard output.
 flush = fn() ->
-  loop do
+  f = fn(f) ->
     receive do
       x ->
         IO.puts "Shell got #{ inspect x }"
-        recur
+        f.(f)
       after 0 ->
         :ok
     end
   end
+  f.(f)
 end
 
 # Spawn a new Event process
-Event.start "Event", 0
+EventModule.start "Event", 0
 
 # Print out all pending messages
 flush.()
 
 # This time we keep a reference to the new process around so that we can
 # cancel it later
-pid = Event.start "Another event", 500
-Event.cancel pid
+pid = EventModule.start "Another event", 500
+EventModule.cancel pid

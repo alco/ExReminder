@@ -16,12 +16,12 @@ defmodule EventServer do
   def start do
     # Register the server process so that it can be referred to as
     # EventServer by clients
-    Process.register __MODULE__, pid = spawn __MODULE__, :init, []
+    Process.register pid = spawn(__MODULE__, :init, []), __MODULE__
     pid
   end
 
   def start_link do
-    Process.register __MODULE__, pid = spawn_link __MODULE__, :init, []
+    Process.register pid = spawn_link(__MODULE__, :init, []), __MODULE__
     pid
   end
 
@@ -42,7 +42,7 @@ defmodule EventServer do
   # Create a new event with a unique name
   def add_event(name, description, timeout) do
     ref = make_ref
-    __MODULE__ <- { Process.self, ref, {:add, name, description, timeout} }
+    __MODULE__ <- { self, ref, {:add, name, description, timeout} }
     receive do
       { ^ref, msg } ->
         msg
@@ -56,7 +56,7 @@ defmodule EventServer do
     # Here we can use `whereis` to find out the pid because we have
     # registered our module in the `start` (and `start_link`) function
     mon = Process.monitor Process.whereis __MODULE__
-    __MODULE__ <- { Process.self, mon, {:subscribe, pid} }
+    __MODULE__ <- { self, mon, {:subscribe, pid} }
     receive do
       { ^mon, :ok } ->
         { :ok, mon }
@@ -70,7 +70,7 @@ defmodule EventServer do
   # Cancel the event with name 'name'
   def cancel(name) do
     ref = make_ref
-    __MODULE__ <- { Process.self, ref, {:cancel, name} }
+    __MODULE__ <- { self, ref, {:cancel, name} }
     receive do
       { ^ref, :ok } ->
         :ok
@@ -116,9 +116,7 @@ defmodule EventServer do
       main_loop new_state
 
     { pid, msg_ref, {:add, name, description, timeout} } ->
-      # Use the fully qualified name __MAIN__.Event to refer to the
-      # Event module and not our referred EventServer.Event record
-      event_pid = __MAIN__.Event.start_link name, timeout
+      event_pid = EventModule.start_link name, timeout
       new_state = state.update_events fn(events) ->
                     :orddict.store(
                       name,
@@ -137,7 +135,7 @@ defmodule EventServer do
                  :error ->
                    state.events
                  { :ok, event } ->
-                   __MAIN__.Event.cancel event.pid
+                   EventModule.cancel event.pid
                    :orddict.erase name, state.events
                end
       pid <- { msg_ref, :ok }

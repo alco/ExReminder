@@ -5,7 +5,7 @@
 #
 
 EventServer.start
-EventServer.subscribe Process.self
+EventServer.subscribe self
 EventServer.add_event "Hey There!", "test", 1000
 EventServer.listen 5
 EventServer.cancel "Hey There!"
